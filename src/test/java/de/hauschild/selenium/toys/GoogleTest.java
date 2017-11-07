@@ -14,12 +14,18 @@ public class GoogleTest extends SeleniumTests {
 
   @Test
   public void failingCalculatorTest() {
+    screenshot("start");
+
     type("2+2") //
         .on(By.id("lst-ib")) //
         .submit();
 
+    screenshot("2plus2");
+
     expect(By.id("cwtltblr")) //
         .hasText("5");
+
+    screenshot("equals4");
   }
 
 }
