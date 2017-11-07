@@ -22,6 +22,10 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 
+import de.hauschild.selenium.toys.factory.DelegatingWebDriverFactory;
+import de.hauschild.selenium.toys.factory.WebDriverFactory;
+import de.hauschild.selenium.toys.reporter.Reporter;
+
 @Listeners({Reporter.class})
 public abstract class SeleniumTests {
 

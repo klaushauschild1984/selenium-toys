@@ -1,4 +1,4 @@
-package de.hauschild.selenium.toys;
+package de.hauschild.selenium.toys.factory.chrome;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -20,12 +20,14 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.testng.Assert;
 
+import de.hauschild.selenium.toys.factory.WebDriverFactory;
+
 /**
  * {@link WebDriverFactory} implementation for Google Chrome using the {@link ChromeDriver}.<br />
  * As additional initialization step the latest release of the chrome driver will be downloaded from
  * {@value DOWNLOAD_URL}.
  */
-class ChromeWebDriverFactory implements WebDriverFactory {
+public class ChromeWebDriverFactory implements WebDriverFactory {
 
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
   private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
@@ -42,7 +44,7 @@ class ChromeWebDriverFactory implements WebDriverFactory {
     File chromeDriverExecutable = new File(chromeDriverDirectory, "chromedriver.exe");
     if (!chromeDriverExecutable.exists()) {
       chromeDriverDirectory.mkdir();
-      try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build();) {
+      try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
         final String latestRelease = getLatestRelease(httpClient);
         final String downloadBaseUrl = String.format("%s/%s/", DOWNLOAD_URL, latestRelease);
         // TODO currently only windows

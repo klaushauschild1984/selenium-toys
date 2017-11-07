@@ -1,4 +1,4 @@
-package de.hauschild.selenium.toys;
+package de.hauschild.selenium.toys.factory;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -8,11 +8,14 @@ import org.testng.Assert;
 
 import com.google.common.collect.ImmutableMap;
 
+import de.hauschild.selenium.toys.WebDriver;
+import de.hauschild.selenium.toys.factory.chrome.ChromeWebDriverFactory;
+
 /**
  * Implementation of {@link WebDriverFactory} that delegates to the concrete {@link WebDriverFactory
  * implementations} and configures common settings.
  */
-class DelegatingWebDriverFactory implements WebDriverFactory {
+public class DelegatingWebDriverFactory implements WebDriverFactory {
 
   private static final Map<String, WebDriverFactory> WEB_DRIVER_FACTORIES =
       ImmutableMap.<String, WebDriverFactory>builder() //

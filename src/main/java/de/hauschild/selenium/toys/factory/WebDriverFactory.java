@@ -1,11 +1,11 @@
-package de.hauschild.selenium.toys;
+package de.hauschild.selenium.toys.factory;
 
 import org.openqa.selenium.WebDriver;
 
 /**
  * A web driver factory creates a web driver and initializes it.
  */
-interface WebDriverFactory {
+public interface WebDriverFactory {
 
   /**
    * Creates the web driver and initializes it.
