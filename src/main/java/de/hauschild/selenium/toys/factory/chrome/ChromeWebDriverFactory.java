@@ -1,100 +1,115 @@
 package de.hauschild.selenium.toys.factory.chrome;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Objects;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
-import org.testng.Assert;
 
+import com.google.common.base.Charsets;
+
+import de.hauschild.selenium.toys.factory.AbstractWebDriverFactory;
 import de.hauschild.selenium.toys.factory.WebDriverFactory;
 
 /**
  * {@link WebDriverFactory} implementation for Google Chrome using the {@link ChromeDriver}.<br />
  * As additional initialization step the latest release of the chrome driver will be downloaded from
- * {@value DOWNLOAD_URL}.
+ * <a href=
+ * "http://chromedriver.storage.googleapis.com">http://chromedriver.storage.googleapis.com</a>.
  */
-public class ChromeWebDriverFactory implements WebDriverFactory {
-
-  private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
-  private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
+public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
 
   private static boolean INITIALIZED;
 
-  private static void initialize() {
+  private static void initialize(final String expectedVersion, final boolean forceUpdate) {
     if (INITIALIZED) {
+      return;
+    }
+
+    if (System.getProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY) != null) {
+      INITIALIZED = true;
       return;
     }
 
     final File tempDirectory = new File(System.getProperty("java.io.tmpdir"));
     final File chromeDriverDirectory = new File(tempDirectory, "chromedriver");
-    File chromeDriverExecutable = new File(chromeDriverDirectory, "chromedriver.exe");
-    if (!chromeDriverExecutable.exists()) {
-      chromeDriverDirectory.mkdir();
-      try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-        final String latestRelease = getLatestRelease(httpClient);
-        final String downloadBaseUrl = String.format("%s/%s/", DOWNLOAD_URL, latestRelease);
-        // TODO currently only windows
-        final String downloadBinaryUrl = downloadBaseUrl + "chromedriver_win32.zip";
-        chromeDriverExecutable =
-            downloadBinary(httpClient, downloadBinaryUrl, chromeDriverDirectory);
-      } catch (final IOException exception) {
-        Assert.fail("Unable to download or setup chrome driver.", exception);
-      }
+    final File versionInfoFile = new File(chromeDriverDirectory, ".version");
+    final Entry<String, String> versionInfo = readVersionInfo(versionInfoFile);
+
+    final File chromeDriverExecutable;
+    if (versionInfo == null) {
+      chromeDriverExecutable = downloadChromeDriver(chromeDriverDirectory, versionInfoFile, null);
+    } else if (forceUpdate) {
+      chromeDriverExecutable = downloadChromeDriver(chromeDriverDirectory, versionInfoFile, null);
+    } else if (expectedVersion != null && !Objects.equals(expectedVersion, versionInfo.getKey())) {
+      chromeDriverExecutable =
+          downloadChromeDriver(chromeDriverDirectory, versionInfoFile, versionInfo.getKey());
+    } else {
+      chromeDriverExecutable = useLocalChromeDriver(chromeDriverDirectory, versionInfo);
     }
+
     System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,
         chromeDriverExecutable.getAbsolutePath());
     INITIALIZED = true;
   }
 
-  private static File downloadBinary(final CloseableHttpClient httpClient, final String downloadUrl,
-      final File chromeDriverDirectory) throws IOException {
-    try (final CloseableHttpResponse response = httpClient.execute(new HttpGet(downloadUrl))) {
-      handleHttpStatus(response);
-      try (final InputStream responseContent =
-          new BufferedInputStream(response.getEntity().getContent())) {
-        final ZipInputStream zipInputStream = new ZipInputStream(responseContent);
-        final ZipEntry entry = zipInputStream.getNextEntry();
-        final File binaryFile = new File(chromeDriverDirectory, entry.getName());
-        final FileOutputStream binaryFileOutputStream = new FileOutputStream(binaryFile);
-        IOUtils.copy(zipInputStream, binaryFileOutputStream);
-        binaryFileOutputStream.close();
-        return binaryFile;
-      }
+  private static File useLocalChromeDriver(final File chromeDriverDirectory,
+      final Entry<String, String> versionInfo) {
+    final File chromeDriverExecutable;
+    chromeDriverExecutable = new File(chromeDriverDirectory, versionInfo.getValue());
+    return chromeDriverExecutable;
+  }
+
+  private static File downloadChromeDriver(final File chromeDriverDirectory,
+      final File versionInfoFile, final String expectedVersion) {
+    final File chromeDriverExecutable;
+    final String version;
+    if (expectedVersion == null) {
+      version = ChromeWebDriverUtils.getLatestRelease();
+    } else {
+      version = expectedVersion;
+    }
+    final Entry<String, String> versionInfo = readVersionInfo(versionInfoFile);
+    if (versionInfo != null && Objects.equals(version, versionInfo.getKey())) {
+      return new File(chromeDriverDirectory, versionInfo.getValue());
+    }
+    chromeDriverExecutable =
+        ChromeWebDriverUtils.downloadChromeDriver(version, "win32", chromeDriverDirectory);
+    writeVersionInfo(versionInfoFile, version, chromeDriverExecutable);
+    return chromeDriverExecutable;
+  }
+
+  private static void writeVersionInfo(final File versionInfoFile, final String version,
+      final File executable) {
+    try {
+      FileUtils.writeLines(versionInfoFile, Arrays.asList(version, executable.getName()));
+    } catch (final IOException exception) {
+      throw new RuntimeException(exception);
     }
   }
 
-  private static String getLatestRelease(final CloseableHttpClient httpClient) throws IOException {
-    try (final CloseableHttpResponse response =
-        httpClient.execute(new HttpGet(LATEST_RELEASE_URL))) {
-      handleHttpStatus(response);
-      return EntityUtils.toString(response.getEntity()).trim();
+  private static Entry<String, String> readVersionInfo(final File versionFile) {
+    if (!versionFile.exists()) {
+      return null;
     }
-  }
-
-  private static void handleHttpStatus(final CloseableHttpResponse response) throws IOException {
-    final int statusCode = response.getStatusLine().getStatusCode();
-    if (statusCode != HttpStatus.SC_OK) {
-      throw new IOException(String.format("Status code: %s", statusCode));
+    try {
+      final List<String> lines = FileUtils.readLines(versionFile, Charsets.UTF_8);
+      return new SimpleEntry<>(lines.get(0), lines.get(1));
+    } catch (final IOException exception) {
+      throw new RuntimeException(exception);
     }
   }
 
   @Override
   public WebDriver create(final Class<?> testClass) {
-    initialize();
+    initialize(null, true);
     return new ChromeDriver();
   }
 
