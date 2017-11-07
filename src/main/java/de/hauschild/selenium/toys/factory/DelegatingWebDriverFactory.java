@@ -3,7 +3,6 @@ package de.hauschild.selenium.toys.factory;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.core.annotation.AnnotationUtils;
 import org.testng.Assert;
 
 import com.google.common.collect.ImmutableMap;
@@ -15,7 +14,7 @@ import de.hauschild.selenium.toys.factory.chrome.ChromeWebDriverFactory;
  * Implementation of {@link WebDriverFactory} that delegates to the concrete {@link WebDriverFactory
  * implementations} and configures common settings.
  */
-public class DelegatingWebDriverFactory implements WebDriverFactory {
+public class DelegatingWebDriverFactory extends AbstractWebDriverFactory {
 
   private static final Map<String, WebDriverFactory> WEB_DRIVER_FACTORIES =
       ImmutableMap.<String, WebDriverFactory>builder() //
@@ -47,17 +46,6 @@ public class DelegatingWebDriverFactory implements WebDriverFactory {
       return null;
     }
     return webDriverFactory;
-  }
-
-  private WebDriver getWebDriverAnnotation(final Class<?> testClass) {
-    final WebDriver webDriverAnnotation =
-        AnnotationUtils.findAnnotation(testClass, WebDriver.class);
-    if (webDriverAnnotation == null) {
-      Assert.fail(String.format(
-          "The test class %s misses the %s annotation to specify the implementation to use.",
-          testClass.getName(), WebDriver.class.getName()));
-    }
-    return webDriverAnnotation;
   }
 
 }
