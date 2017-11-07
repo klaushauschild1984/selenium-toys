@@ -8,6 +8,10 @@ import org.testng.Assert;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Implementation of {@link WebDriverFactory} that delegates to the concrete {@link WebDriverFactory
+ * implementations} and configures common settings.
+ */
 class DelegatingWebDriverFactory implements WebDriverFactory {
 
   private static final Map<String, WebDriverFactory> WEB_DRIVER_FACTORIES =

@@ -20,6 +20,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.testng.Assert;
 
+/**
+ * {@link WebDriverFactory} implementation for Google Chrome using the {@link ChromeDriver}.<br />
+ * As additional initialization step the latest release of the chrome driver will be downloaded from
+ * {@value DOWNLOAD_URL}.
+ */
 class ChromeWebDriverFactory implements WebDriverFactory {
 
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";

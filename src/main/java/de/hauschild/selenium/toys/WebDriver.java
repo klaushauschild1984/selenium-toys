@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * implementation for web tests.<br/>
  * Supported implementations are:
  * <ul>
- * <li>chrome</li>
+ * <li>{@value CHROME}</li>
  * </ul>
  * Depending on the used implementation additional setup will be performed.
  */
