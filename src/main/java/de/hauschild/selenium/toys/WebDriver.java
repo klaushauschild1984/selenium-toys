@@ -6,12 +6,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import de.hauschild.selenium.toys.factory.chrome.ChromeWebDriverFactory;
+
 /**
  * Test classes extending {@link SeleniumTests} use this annotation to specify the underlying
  * implementation for web tests.<br/>
  * Supported implementations are:
  * <ul>
- * <li>{@value CHROME}</li>
+ * <li>{@value ChromeWebDriverFactory#CHROME}</li>
  * </ul>
  * Depending on the used implementation additional setup will be performed.
  */
@@ -20,11 +22,10 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface WebDriver {
 
-  String CHROME = "chrome";
-  long NOT_SET = -1;
+  String IMPLICITLY_WAIT = "implicitlyWait";
 
   String value();
 
-  long implicitlyWait() default NOT_SET;
+  String[] options() default {};
 
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
@@ -14,6 +15,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.MoreObjects;
 
 import de.hauschild.selenium.toys.factory.AbstractWebDriverFactory;
 import de.hauschild.selenium.toys.factory.WebDriverFactory;
@@ -25,6 +27,10 @@ import de.hauschild.selenium.toys.factory.WebDriverFactory;
  * "http://chromedriver.storage.googleapis.com">http://chromedriver.storage.googleapis.com</a>.
  */
 public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
+
+  public static final String CHROME = "chrome";
+  public static final String EXPECTED_VERSION = CHROME + "_expectedVersion";
+  public static final String FORCE_UPDATE = CHROME + "_forceUpdate";
 
   private static boolean INITIALIZED;
 
@@ -108,9 +114,13 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
   }
 
   @Override
-  public WebDriver create(final Class<?> testClass) {
-    initialize(null, true);
+  protected WebDriver create(final Class<?> testClass,
+      final de.hauschild.selenium.toys.WebDriver webDriverAnnotation,
+      final Map<String, String> options) {
+    final String expectedVersion = options.get(EXPECTED_VERSION);
+    final boolean forceUpdate = Boolean
+        .valueOf(MoreObjects.firstNonNull(options.get(FORCE_UPDATE), Boolean.TRUE.toString()));
+    initialize(expectedVersion, forceUpdate);
     return new ChromeDriver();
   }
-
 }

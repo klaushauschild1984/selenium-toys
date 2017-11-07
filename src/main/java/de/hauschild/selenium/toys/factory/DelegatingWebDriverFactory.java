@@ -1,7 +1,6 @@
 package de.hauschild.selenium.toys.factory;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.testng.Assert;
 
@@ -18,24 +17,14 @@ public class DelegatingWebDriverFactory extends AbstractWebDriverFactory {
 
   private static final Map<String, WebDriverFactory> WEB_DRIVER_FACTORIES =
       ImmutableMap.<String, WebDriverFactory>builder() //
-          .put(WebDriver.CHROME, new ChromeWebDriverFactory()) //
+          .put(ChromeWebDriverFactory.CHROME, new ChromeWebDriverFactory()) //
           .build();
 
   @Override
-  public org.openqa.selenium.WebDriver create(final Class<?> testClass) {
-    final WebDriver webDriverAnnotation = getWebDriverAnnotation(testClass);
+  protected org.openqa.selenium.WebDriver create(final Class<?> testClass,
+      final WebDriver webDriverAnnotation, final Map<String, String> options) {
     final WebDriverFactory webDriverFactory = getWebDriverFactory(webDriverAnnotation);
-    final org.openqa.selenium.WebDriver webDriver = webDriverFactory.create(testClass);
-    configureWebDriver(webDriverAnnotation, webDriver);
-    return webDriver;
-  }
-
-  protected void configureWebDriver(final WebDriver webDriverAnnotation,
-      final org.openqa.selenium.WebDriver webDriver) {
-    final long implicitlyWait = webDriverAnnotation.implicitlyWait();
-    if (implicitlyWait != WebDriver.NOT_SET) {
-      webDriver.manage().timeouts().implicitlyWait(implicitlyWait, TimeUnit.MILLISECONDS);
-    }
+    return webDriverFactory.create(testClass);
   }
 
   private WebDriverFactory getWebDriverFactory(final WebDriver webDriverAnnotation) {
