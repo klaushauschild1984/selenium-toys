@@ -20,7 +20,9 @@ import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 
+@Listeners({Reporter.class})
 public abstract class SeleniumTests {
 
   private WebDriverFactory webDriverFactory = new DelegatingWebDriverFactory();
