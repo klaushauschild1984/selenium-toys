@@ -3,10 +3,8 @@ package de.hauschild.selenium.toys;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
@@ -20,7 +18,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ClassUtils;
 import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
@@ -28,7 +25,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import de.hauschild.selenium.toys.factory.DelegatingWebDriverFactory;
 import de.hauschild.selenium.toys.factory.WebDriverFactory;
@@ -37,7 +33,8 @@ import de.hauschild.selenium.toys.reporter.Reporter;
 @Listeners({Reporter.class})
 public abstract class SeleniumTests {
 
-  private final Map<Method, List<Entry<String, BufferedImage>>> screenshots = Maps.newHashMap();
+  private final ThreadLocal<List<Entry<String, BufferedImage>>> screenshots =
+      ThreadLocal.withInitial(Lists::newArrayList);
 
   private WebDriverFactory webDriverFactory = new DelegatingWebDriverFactory();
   private WebDriver webDriver;
@@ -62,6 +59,7 @@ public abstract class SeleniumTests {
   @AfterMethod
   public void after(final ITestResult testResult) throws IOException {
     takeScreenshotOnFailure(testResult);
+    testResult.setAttribute("screenshots", screenshots.get());
 
     webDriver.close();
   }
@@ -70,25 +68,12 @@ public abstract class SeleniumTests {
     if (testResult.getStatus() != ITestResult.FAILURE) {
       return;
     }
-    screenshot(testResult.getMethod().getConstructorOrMethod().getMethod(), "failure");
+    screenshot("failure");
   }
 
   protected void screenshot(final String label) {
-    try {
-      final StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[2];
-      final Class<?> clazz = Class.forName(stackTraceElement.getClassName());
-      final Method method = ClassUtils.getMethod(clazz, stackTraceElement.getMethodName(), null);
-      screenshot(method, label);
-    } catch (final Exception exception) {
-      throw new RuntimeException(exception);
-    }
-  }
-
-  private void screenshot(final Method method, final String label) {
-    final List<Entry<String, BufferedImage>> methodScreenshots =
-        screenshots.computeIfAbsent(method, k -> Lists.newArrayList());
     final BufferedImage screenshot = screenshot();
-    methodScreenshots.add(new SimpleEntry<>(label, screenshot));
+    screenshots.get().add(new SimpleEntry<>(label, screenshot));
   }
 
   private BufferedImage screenshot() {
