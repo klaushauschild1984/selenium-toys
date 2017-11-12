@@ -1,7 +1,7 @@
 package de.hauschild.selenium.toys;
 
-import static de.hauschild.selenium.toys.WebDriver.IMPLICITLY_WAIT;
-import static de.hauschild.selenium.toys.factory.chrome.ChromeWebDriverFactory.CHROME;
+import static de.hauschild.selenium.toys.factory.AbstractWebDriverFactory.IMPLICITLY_WAIT;
+import static org.openqa.selenium.remote.BrowserType.CHROME;
 
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;

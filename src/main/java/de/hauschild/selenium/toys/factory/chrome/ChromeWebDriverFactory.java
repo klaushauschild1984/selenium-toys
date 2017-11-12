@@ -1,5 +1,7 @@
 package de.hauschild.selenium.toys.factory.chrome;
 
+import static org.openqa.selenium.remote.BrowserType.CHROME;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
@@ -18,6 +20,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
 
 import de.hauschild.selenium.toys.factory.AbstractWebDriverFactory;
+import de.hauschild.selenium.toys.factory.DownloadUtils;
 import de.hauschild.selenium.toys.factory.WebDriverFactory;
 
 /**
@@ -28,9 +31,11 @@ import de.hauschild.selenium.toys.factory.WebDriverFactory;
  */
 public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
 
-  public static final String CHROME = "chrome";
   public static final String EXPECTED_VERSION = CHROME + "_expectedVersion";
   public static final String FORCE_UPDATE = CHROME + "_forceUpdate";
+
+  private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
+  private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
 
   private static boolean INITIALIZED;
 
@@ -78,7 +83,7 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
     final File chromeDriverExecutable;
     final String version;
     if (expectedVersion == null) {
-      version = ChromeWebDriverUtils.getLatestRelease();
+      version = DownloadUtils.getString(LATEST_RELEASE_URL);
     } else {
       version = expectedVersion;
     }
@@ -86,10 +91,17 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
     if (versionInfo != null && Objects.equals(version, versionInfo.getKey())) {
       return new File(chromeDriverDirectory, versionInfo.getValue());
     }
-    chromeDriverExecutable =
-        ChromeWebDriverUtils.downloadChromeDriver(version, "win32", chromeDriverDirectory);
+    chromeDriverExecutable = downloadChromeDriver(version, "win32", chromeDriverDirectory);
     writeVersionInfo(versionInfoFile, version, chromeDriverExecutable);
     return chromeDriverExecutable;
+  }
+
+  private static File downloadChromeDriver(final String version, final String system,
+      final File targetDirectory) {
+    final String downloadUrl =
+        DOWNLOAD_URL + String.format("/%s/chromedriver_%s.zip", version, system);
+    DownloadUtils.downloadZipAndExtract(downloadUrl, targetDirectory);
+    return new File(targetDirectory, "chromedriver.exe");
   }
 
   private static void writeVersionInfo(final File versionInfoFile, final String version,
@@ -123,4 +135,5 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
     initialize(expectedVersion, forceUpdate);
     return new ChromeDriver();
   }
+
 }

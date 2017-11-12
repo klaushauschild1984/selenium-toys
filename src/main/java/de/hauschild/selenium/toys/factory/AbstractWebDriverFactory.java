@@ -14,6 +14,8 @@ import de.hauschild.selenium.toys.WebDriver;
 
 public abstract class AbstractWebDriverFactory implements WebDriverFactory {
 
+  public static final String IMPLICITLY_WAIT = "implicitlyWait";
+
   @Override
   public org.openqa.selenium.WebDriver create(final Class<?> testClass) {
     final WebDriver webDriverAnnotation = getWebDriverAnnotation(testClass);
@@ -28,7 +30,7 @@ public abstract class AbstractWebDriverFactory implements WebDriverFactory {
 
   protected void configureWebDriver(final org.openqa.selenium.WebDriver webDriver,
       final Map<String, String> options) {
-    final String implicitlyWait = options.get(WebDriver.IMPLICITLY_WAIT);
+    final String implicitlyWait = options.get(IMPLICITLY_WAIT);
     if (implicitlyWait != null) {
       webDriver.manage().timeouts().implicitlyWait(Long.valueOf(implicitlyWait),
           TimeUnit.MILLISECONDS);

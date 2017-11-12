@@ -2,12 +2,14 @@ package de.hauschild.selenium.toys.factory;
 
 import java.util.Map;
 
+import org.openqa.selenium.remote.BrowserType;
 import org.testng.Assert;
 
 import com.google.common.collect.ImmutableMap;
 
 import de.hauschild.selenium.toys.WebDriver;
 import de.hauschild.selenium.toys.factory.chrome.ChromeWebDriverFactory;
+import de.hauschild.selenium.toys.factory.phantomjs.PhantomJSWebDriverFactory;
 
 /**
  * Implementation of {@link WebDriverFactory} that delegates to the concrete {@link WebDriverFactory
@@ -17,7 +19,8 @@ public class DelegatingWebDriverFactory extends AbstractWebDriverFactory {
 
   private static final Map<String, WebDriverFactory> WEB_DRIVER_FACTORIES =
       ImmutableMap.<String, WebDriverFactory>builder() //
-          .put(ChromeWebDriverFactory.CHROME, new ChromeWebDriverFactory()) //
+          .put(BrowserType.CHROME, new ChromeWebDriverFactory()) //
+          .put(BrowserType.PHANTOMJS, new PhantomJSWebDriverFactory()) //
           .build();
 
   @Override
