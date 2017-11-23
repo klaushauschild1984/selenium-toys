@@ -5,7 +5,7 @@ addons:
   sonarcloud:
     organization: "klaushauschild1984-github"
     token:
-      secure: "your_token_encrypted_with_travis_encrypt_tool"
+      secure: "mrz/ksIZ0Qi0gZ5+7Fdc1vn39mM+Bp1DeWDk83Zz4/dvrE9UgscptKw6h/nJ7aAcQJHgjjz4xYFgu7mm3fHmNDbsyq4tYkKC5iWSPB8SzXYbrGmXXaJgmxAOymNwtP9S+H/uH8bj4+1cqK7BgrNcjYu3kJLL9OoLxdx+FYjxA+RMtsCa6qIe3AFo9ZW97qmsGnJKXF8dAPU56e0DZl4AJd7ISxCHDo6jw+/MV3EI/noPxJOTllT2syGf0JnaBZtIXdaqPesOuZTmDB9pN9HujGfrWtDsQ6Sr2wyAi8r3OOMNaIC9o8LNNY7mBu4ShA2VkXayGJaaqXTiR+LJUxlLovlf5xtLdt/61dueul4DYOFVFOzrt7pLDr4DaXHNaS9bRS7LHobt7zEIFRpJ+lBNVJPXBxomizoSLyVrNpBHbqqyVUAY1SuUP3HU6k5wF1DfgNUiPY+Cm77adRhPyk7QQ1/wpcM42BNz5RIR/ew8avH97A3ErYhyk3HWp92/RtqheTqsF8Nd58PID1t4ICTizr1utmbo4/qHtvlO0Ct5/4EaQdzssMLa7Qp3/Yq1UzGTTfLDumjvtbow9zK2h9AS5b17MXhtlSy6Crr44E2+2QkIsBeeas4RmGlBcqzvRprD6AYNAM1H2sjPIwhq0Fpf/poJ0iw0a7UphsYFH/N+CCs="
 jdk:
   - oraclejdk8
 script:
