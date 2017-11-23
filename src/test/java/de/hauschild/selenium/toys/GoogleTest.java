@@ -10,22 +10,17 @@ import org.testng.annotations.Test;
     IMPLICITLY_WAIT, "500", //
 })
 @EntryPoint("http://www.google.com")
+@TakeScreenshots(baseDirectory = "C:\\Workspaces\\_\\selenium-toys\\target\\screenshots")
 public class GoogleTest extends SeleniumTests {
 
   @Test
   public void failingCalculatorTest() {
-    screenshot("start");
-
     type("2+2") //
         .on(By.id("lst-ib")) //
         .submit();
 
-    screenshot("2plus2");
-
     expect(By.id("cwtltblr")) //
         .hasText("5");
-
-    screenshot("equals4");
   }
 
 }
