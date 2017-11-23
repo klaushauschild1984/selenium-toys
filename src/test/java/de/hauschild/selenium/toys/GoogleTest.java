@@ -13,7 +13,7 @@ import org.testng.annotations.Test;
 @TakeScreenshots(baseDirectory = "C:\\Workspaces\\_\\selenium-toys\\target\\screenshots")
 public class GoogleTest extends SeleniumTests {
 
-  @Test
+  // @Test
   public void failingCalculatorTest() {
     type("2+2") //
         .on(By.id("lst-ib")) //
