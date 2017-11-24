@@ -1,4 +1,4 @@
-package de.hauschild.selenium.toys;
+package org.openqa.selenium.toys;
 
 import java.lang.reflect.Method;
 
@@ -8,14 +8,13 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.toys.factory.DelegatingWebDriverFactory;
+import org.openqa.selenium.toys.factory.WebDriverFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-
-import de.hauschild.selenium.toys.factory.DelegatingWebDriverFactory;
-import de.hauschild.selenium.toys.factory.WebDriverFactory;
 
 public abstract class SeleniumTests {
 

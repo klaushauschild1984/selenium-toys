@@ -1,10 +1,9 @@
-package de.hauschild.selenium.toys;
+package org.openqa.selenium.toys;
 
-import static de.hauschild.selenium.toys.factory.AbstractWebDriverFactory.IMPLICITLY_WAIT;
 import static org.openqa.selenium.remote.BrowserType.CHROME;
+import static org.openqa.selenium.toys.factory.AbstractWebDriverFactory.IMPLICITLY_WAIT;
 
 import org.openqa.selenium.By;
-import org.testng.annotations.Test;
 
 @WebDriver(value = CHROME, options = { //
     IMPLICITLY_WAIT, "500", //

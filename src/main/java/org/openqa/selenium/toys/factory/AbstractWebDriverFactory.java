@@ -1,16 +1,15 @@
-package de.hauschild.selenium.toys.factory;
+package org.openqa.selenium.toys.factory;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.openqa.selenium.toys.WebDriver;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.testng.Assert;
 
 import com.google.common.collect.Maps;
-
-import de.hauschild.selenium.toys.WebDriver;
 
 public abstract class AbstractWebDriverFactory implements WebDriverFactory {
 

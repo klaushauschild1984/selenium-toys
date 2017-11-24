@@ -1,4 +1,4 @@
-package de.hauschild.selenium.toys.factory.chrome;
+package org.openqa.selenium.toys.factory.chrome;
 
 import static org.openqa.selenium.remote.BrowserType.CHROME;
 
@@ -15,13 +15,12 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.toys.factory.AbstractWebDriverFactory;
+import org.openqa.selenium.toys.factory.DownloadUtils;
+import org.openqa.selenium.toys.factory.WebDriverFactory;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
-
-import de.hauschild.selenium.toys.factory.AbstractWebDriverFactory;
-import de.hauschild.selenium.toys.factory.DownloadUtils;
-import de.hauschild.selenium.toys.factory.WebDriverFactory;
 
 /**
  * {@link WebDriverFactory} implementation for Google Chrome using the {@link ChromeDriver}.<br />
@@ -127,7 +126,7 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
 
   @Override
   protected WebDriver create(final Class<?> testClass,
-      final de.hauschild.selenium.toys.WebDriver webDriverAnnotation,
+      final org.openqa.selenium.toys.WebDriver webDriverAnnotation,
       final Map<String, String> options) {
     final String expectedVersion = options.get(EXPECTED_VERSION);
     final boolean forceUpdate = Boolean

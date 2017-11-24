@@ -1,13 +1,12 @@
-package de.hauschild.selenium.toys.factory.phantomjs;
+package org.openqa.selenium.toys.factory.phantomjs;
 
 import java.io.File;
 import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
-
-import de.hauschild.selenium.toys.factory.AbstractWebDriverFactory;
-import de.hauschild.selenium.toys.factory.DownloadUtils;
+import org.openqa.selenium.toys.factory.AbstractWebDriverFactory;
+import org.openqa.selenium.toys.factory.DownloadUtils;
 
 public class PhantomJSWebDriverFactory extends AbstractWebDriverFactory {
 
@@ -33,7 +32,7 @@ public class PhantomJSWebDriverFactory extends AbstractWebDriverFactory {
 
   @Override
   protected WebDriver create(final Class<?> testClass,
-      final de.hauschild.selenium.toys.WebDriver webDriverAnnotation,
+      final org.openqa.selenium.toys.WebDriver webDriverAnnotation,
       final Map<String, String> options) {
     initialize();
     return new PhantomJSDriver();

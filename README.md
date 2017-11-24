@@ -45,7 +45,7 @@ To use Selenium Toys just add the following repository and dependency to you `po
 ...
   <dependencies>
     <dependency>
-      <groupId>de.hauschild.selenium-toys</groupId>
+      <groupId>org.seleniumhq.selenium-toys</groupId>
       <artifactId>selenium-toys</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>

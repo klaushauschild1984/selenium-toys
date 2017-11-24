@@ -1,15 +1,14 @@
-package de.hauschild.selenium.toys.factory;
+package org.openqa.selenium.toys.factory;
 
 import java.util.Map;
 
 import org.openqa.selenium.remote.BrowserType;
+import org.openqa.selenium.toys.WebDriver;
+import org.openqa.selenium.toys.factory.chrome.ChromeWebDriverFactory;
+import org.openqa.selenium.toys.factory.phantomjs.PhantomJSWebDriverFactory;
 import org.testng.Assert;
 
 import com.google.common.collect.ImmutableMap;
-
-import de.hauschild.selenium.toys.WebDriver;
-import de.hauschild.selenium.toys.factory.chrome.ChromeWebDriverFactory;
-import de.hauschild.selenium.toys.factory.phantomjs.PhantomJSWebDriverFactory;
 
 /**
  * Implementation of {@link WebDriverFactory} that delegates to the concrete {@link WebDriverFactory

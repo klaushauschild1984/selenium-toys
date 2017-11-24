@@ -1,4 +1,4 @@
-package de.hauschild.selenium.toys;
+package org.openqa.selenium.toys;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;

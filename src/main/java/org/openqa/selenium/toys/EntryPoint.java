@@ -1,4 +1,4 @@
-package de.hauschild.selenium.toys;
+package org.openqa.selenium.toys;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
