@@ -4,10 +4,70 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- The Basics -->
     <groupId>de.hauschild.selenium-toys</groupId>
     <artifactId>selenium-toys</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <!-- Tools -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.3-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.15</version>
+        </dependency>
+        <!-- Tools -->
+        <!-- TestNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.11</version>
+        </dependency>
+        <!-- TestNG -->
+        <!-- Selenium -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.detro</groupId>
+            <artifactId>ghostdriver</artifactId>
+            <version>2.1.0</version>
+        </dependency>
+        <!-- Selenium -->
+    </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>5.0.1.RELEASE</spring.version>
+        <selenium.version>3.7.0</selenium.version>
+    </properties>
 
+    <!-- Build Settings -->
     <build>
         <plugins>
             <plugin>
@@ -105,73 +165,48 @@
         </plugins>
     </build>
 
-    <dependencies>
-        <!-- Tools -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>23.3-jre</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-compress</artifactId>
-            <version>1.15</version>
-        </dependency>
-        <!-- Tools -->
-        <!-- TestNG -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>6.11</version>
-        </dependency>
-        <!-- TestNG -->
-        <!-- Selenium -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-remote-driver</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.detro</groupId>
-            <artifactId>ghostdriver</artifactId>
-            <version>2.1.0</version>
-        </dependency>
-        <!-- Selenium -->
-    </dependencies>
+    <!-- More Project Information -->
+    <name>Selenium Tosy</name>
+    <description>Selenium Toys</description>
+    <url>https://github.com/klaushauschild1984/selenium-toys</url>
+    <inceptionYear>2017</inceptionYear>
+    <licenses>
+        <license>
+            <name>GNU General Public License v3.0</name>
+            <url>https://github.com/klaushauschild1984/selenium-toys/blob/master/LICENSE</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>klaushauschild1984</id>
+            <name>Klaus Hauschild</name>
+            <email>klaus.hauschild.1984@gmail.com</email>
+            <roles>
+                <role>architect</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+    </developers>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring.version>5.0.1.RELEASE</spring.version>
-        <selenium.version>3.7.0</selenium.version>
-    </properties>
-
+    <!-- Environment Settings -->
+    <issueManagement>
+        <url>https://github.com/klaushauschild1984/selenium-toys/issues</url>
+        <system>GitHub</system>
+    </issueManagement>
+    <ciManagement>
+        <system>TravisCI</system>
+        <url>https://travis-ci.org/klaushauschild1984/selenium-toys</url>
+    </ciManagement>
+    <scm>
+        <url>https://github.com/klaushauschild1984/selenium-toys</url>
+        <connection>scm:git:https://github.com/klaushauschild1984/selenium-toys.git</connection>
+    </scm>
     <repositories>
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
-
     <distributionManagement>
         <repository>
             <id>internal.repo</id>
