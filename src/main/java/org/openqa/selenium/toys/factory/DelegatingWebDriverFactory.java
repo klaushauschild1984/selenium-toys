@@ -6,7 +6,6 @@ import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.toys.WebDriver;
 import org.openqa.selenium.toys.factory.chrome.ChromeWebDriverFactory;
 import org.openqa.selenium.toys.factory.phantomjs.PhantomJSWebDriverFactory;
-import org.testng.Assert;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -33,8 +32,7 @@ public class DelegatingWebDriverFactory extends AbstractWebDriverFactory {
     final String webDriverName = webDriverAnnotation.value();
     final WebDriverFactory webDriverFactory = WEB_DRIVER_FACTORIES.get(webDriverName);
     if (webDriverFactory == null) {
-      Assert.fail(String.format("Unknown web driver %s.", webDriverName));
-      return null;
+      throw new AssertionError(String.format("Unknown web driver %s.", webDriverName));
     }
     return webDriverFactory;
   }

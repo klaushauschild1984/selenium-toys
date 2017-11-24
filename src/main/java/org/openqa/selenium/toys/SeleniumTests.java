@@ -11,7 +11,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.toys.factory.DelegatingWebDriverFactory;
 import org.openqa.selenium.toys.factory.WebDriverFactory;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -32,7 +31,7 @@ public abstract class SeleniumTests {
     final EntryPoint entryPointAnnotation =
         AnnotationUtils.findAnnotation(testClass, EntryPoint.class);
     if (entryPointAnnotation == null) {
-      Assert.fail(String.format(
+      throw new AssertionError(String.format(
           "Test class %s is not annotated with %s to specify the entry point of the test.",
           testClass.getName(), EntryPoint.class.getName()));
     }
@@ -87,11 +86,11 @@ public abstract class SeleniumTests {
   private void waitForDocumentReady() {
     final WebDriverWait wait = new WebDriverWait(webDriver, 30);
 
-    wait.until((ExpectedCondition<Boolean>) webDriver -> ((JavascriptExecutor) webDriver)
+    wait.until((ExpectedCondition<Boolean>) driver -> ((JavascriptExecutor) driver)
         .executeScript("return document.readyState").equals("complete"));
-    wait.until((ExpectedCondition<Boolean>) webDriver -> {
+    wait.until((ExpectedCondition<Boolean>) driver -> {
       try {
-        return ((Long) ((JavascriptExecutor) webDriver).executeScript("return jQuery.active") == 0);
+        return ((Long) ((JavascriptExecutor) driver).executeScript("return jQuery.active") == 0);
       } catch (Exception e) {
         // no jQuery present
         return true;

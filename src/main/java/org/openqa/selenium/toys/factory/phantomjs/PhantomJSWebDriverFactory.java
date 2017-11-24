@@ -10,10 +10,10 @@ import org.openqa.selenium.toys.factory.DownloadUtils;
 
 public class PhantomJSWebDriverFactory extends AbstractWebDriverFactory {
 
-  private static boolean INITIALIZED = false;
+  private static boolean initialized = false;
 
   private static void initialize() {
-    if (INITIALIZED) {
+    if (initialized) {
       return;
     }
 
@@ -27,7 +27,7 @@ public class PhantomJSWebDriverFactory extends AbstractWebDriverFactory {
     final File driverExecutable = new File(
         new File(new File(driverDirectory, "phantomjs-2.1.1-windows"), "bin"), "phantomjs.exe");
     System.setProperty("phantomjs.binary.path", driverExecutable.getAbsolutePath());
-    INITIALIZED = true;
+    initialized = true;
   }
 
   @Override

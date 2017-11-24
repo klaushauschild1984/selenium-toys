@@ -36,15 +36,15 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
   private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
 
-  private static boolean INITIALIZED;
+  private static boolean initialized;
 
   private static void initialize(final String expectedVersion, final boolean forceUpdate) {
-    if (INITIALIZED) {
+    if (initialized) {
       return;
     }
 
     if (System.getProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY) != null) {
-      INITIALIZED = true;
+      initialized = true;
       return;
     }
 
@@ -67,7 +67,7 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
 
     System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,
         chromeDriverExecutable.getAbsolutePath());
-    INITIALIZED = true;
+    initialized = true;
   }
 
   private static File useLocalChromeDriver(final File chromeDriverDirectory,
@@ -130,7 +130,7 @@ public class ChromeWebDriverFactory extends AbstractWebDriverFactory {
       final Map<String, String> options) {
     final String expectedVersion = options.get(EXPECTED_VERSION);
     final boolean forceUpdate = Boolean
-        .valueOf(MoreObjects.firstNonNull(options.get(FORCE_UPDATE), Boolean.TRUE.toString()));
+        .parseBoolean(MoreObjects.firstNonNull(options.get(FORCE_UPDATE), Boolean.TRUE.toString()));
     initialize(expectedVersion, forceUpdate);
     return new ChromeDriver();
   }
