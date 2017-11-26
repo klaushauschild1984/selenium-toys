@@ -3,6 +3,7 @@ package org.openqa.selenium.toys.factory;
 import static org.openqa.selenium.toys.Webdriver.IMPLICITLY_WAIT;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.WebDriver;
@@ -27,21 +28,16 @@ public abstract class AbstractWebdriverFactory implements WebdriverFactory {
 
   protected void configureWebDriver(final org.openqa.selenium.WebDriver webDriver,
       final Map<String, String> options) {
-    final String implicitlyWait = options.get(IMPLICITLY_WAIT);
-    if (implicitlyWait != null) {
-      webDriver.manage().timeouts().implicitlyWait(Long.valueOf(implicitlyWait),
-          TimeUnit.MILLISECONDS);
-    }
+    Optional.ofNullable(options.get(IMPLICITLY_WAIT)) //
+        .ifPresent(implicitlyWait -> webDriver.manage().timeouts()
+            .implicitlyWait(Long.valueOf(implicitlyWait), TimeUnit.MILLISECONDS));
   }
 
   private Webdriver getWebDriverAnnotation(final Class<?> testClass) {
-    final Webdriver webdriver = AnnotationUtils.findAnnotation(testClass, Webdriver.class);
-    if (webdriver == null) {
-      throw new AssertionError(String.format(
-          "The test class %s misses the %s annotation to specify the implementation to use.",
-          testClass.getName(), Webdriver.class.getName()));
-    }
-    return webdriver;
+    return Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, Webdriver.class)) //
+        .orElseThrow(() -> new AssertionError(String.format(
+            "The test class %s misses the %s annotation to specify the implementation to use.",
+            testClass.getName(), Webdriver.class.getName())));
   }
 
   private Map<String, String> toMap(final String[] keyValues) {

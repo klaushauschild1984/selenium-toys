@@ -1,6 +1,7 @@
 package org.openqa.selenium.toys.factory;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.BrowserType;
@@ -31,11 +32,9 @@ public class DelegatingWebdriverFactory extends AbstractWebdriverFactory {
 
   private WebdriverFactory getWebDriverFactory(final Webdriver webdriver) {
     final String webDriverName = webdriver.value();
-    final WebdriverFactory webdriverFactory = WEB_DRIVER_FACTORIES.get(webDriverName);
-    if (webdriverFactory == null) {
-      throw new AssertionError(String.format("Unknown web driver %s.", webDriverName));
-    }
-    return webdriverFactory;
+    return Optional.ofNullable(WEB_DRIVER_FACTORIES.get(webDriverName)) //
+        .orElseThrow(
+            () -> new AssertionError(String.format("Unknown web driver %s.", webDriverName)));
   }
 
 }
