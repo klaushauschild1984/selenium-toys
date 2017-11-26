@@ -27,8 +27,10 @@ import com.google.common.io.PatternFilenameFilter;
  */
 public class ChromeWebdriverFactory extends AbstractWebDriverFactory {
 
-  public static final String EXPECTED_VERSION = CHROME + "_expectedVersion";
   private static final Logger LOGGER = LoggerFactory.getLogger(ChromeWebdriverFactory.class);
+
+  public static final String EXPECTED_VERSION = CHROME + "_expectedVersion";
+
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
   private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
 
@@ -115,16 +117,11 @@ public class ChromeWebdriverFactory extends AbstractWebDriverFactory {
         DOWNLOAD_URL + String.format("/%s/chromedriver_%s.zip", version, system);
     LOGGER.debug("Download chromedriver from {}", downloadUrl);
     DownloadUtils.downloadZipAndExtract(downloadUrl, targetDirectory);
-    final File chromedriverFile = new File(targetDirectory, "chromedriver.exe");
-    final File chromedriverSpecificFile =
-        getChromeDriverExecutable(targetDirectory, version, system);
-    chromedriverFile.renameTo(chromedriverSpecificFile);
-    return chromedriverSpecificFile;
-  }
-
-  private static File getChromeDriverExecutable(final File targetDirectory, final String version,
-      final String system) {
-    return new File(targetDirectory, String.format("chromedriver-%s_%s.exe", version, system));
+    final File chromeDriverFile = new File(targetDirectory, "chromedriver.exe");
+    final File chromeDriverFileWithVersion =
+        new File(targetDirectory, String.format("chromedriver-%s.exe", version));
+    chromeDriverFile.renameTo(chromeDriverFileWithVersion);
+    return chromeDriverFileWithVersion;
   }
 
   @Override
