@@ -5,44 +5,44 @@
   <version>1.0-SNAPSHOT</version>
   <versioning>
     <snapshot>
-      <timestamp>20171124.104958</timestamp>
+      <timestamp>20171126.231917</timestamp>
       <buildNumber>1</buildNumber>
     </snapshot>
-    <lastUpdated>20171124104958</lastUpdated>
+    <lastUpdated>20171126231917</lastUpdated>
     <snapshotVersions>
       <snapshotVersion>
         <extension>jar</extension>
-        <value>1.0-20171124.104958-1</value>
-        <updated>20171124104958</updated>
+        <value>1.0-20171126.231917-1</value>
+        <updated>20171126231917</updated>
       </snapshotVersion>
       <snapshotVersion>
         <extension>pom</extension>
-        <value>1.0-20171124.104958-1</value>
-        <updated>20171124104958</updated>
+        <value>1.0-20171126.231917-1</value>
+        <updated>20171126231917</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>sources</classifier>
         <extension>jar</extension>
-        <value>1.0-20171124.104958-1</value>
-        <updated>20171124104958</updated>
+        <value>1.0-20171126.231917-1</value>
+        <updated>20171126231917</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>test-sources</classifier>
         <extension>jar</extension>
-        <value>1.0-20171124.104958-1</value>
-        <updated>20171124104958</updated>
+        <value>1.0-20171126.231917-1</value>
+        <updated>20171126231917</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>javadoc</classifier>
         <extension>jar</extension>
-        <value>1.0-20171124.104958-1</value>
-        <updated>20171124104958</updated>
+        <value>1.0-20171126.231917-1</value>
+        <updated>20171126231917</updated>
       </snapshotVersion>
       <snapshotVersion>
         <classifier>test-javadoc</classifier>
         <extension>jar</extension>
-        <value>1.0-20171124.104958-1</value>
-        <updated>20171124104958</updated>
+        <value>1.0-20171126.231917-1</value>
+        <updated>20171126231917</updated>
       </snapshotVersion>
     </snapshotVersions>
   </versioning>
