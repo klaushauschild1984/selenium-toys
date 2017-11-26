@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
     IMPLICITLY_WAIT, "500", //
 })
 @EntryPoint("http://www.google.com")
-@TakeScreenshots(baseDirectory = "C:\\Workspaces\\_\\selenium-toys\\target\\screenshots")
 public class GoogleTest extends SeleniumTestNGTests {
 
   @Test
@@ -20,7 +19,7 @@ public class GoogleTest extends SeleniumTestNGTests {
         .submit();
 
     expect(By.id("cwtltblr")) //
-        .hasText("5");
+        .hasText("4");
   }
 
 }
