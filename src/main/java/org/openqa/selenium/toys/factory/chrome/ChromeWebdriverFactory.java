@@ -76,7 +76,7 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
 
   private static File getExistingChromeDriverExecutable(final File chromeDriverDirectory) {
     final File[] files = chromeDriverDirectory.listFiles(
-        new PatternFilenameFilter(String.format("chromedriver*.\\%s", getExecutableExtension())));
+        new PatternFilenameFilter(String.format("chromedriver.*%s", getExecutableExtension(true))));
     if (files == null || files.length != 1) {
       return null;
     }
@@ -115,15 +115,18 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     LOGGER.debug("Download chromedriver from {}", downloadUrl);
     DownloadUtils.downloadZipAndExtract(downloadUrl, targetDirectory);
     final File chromeDriverFile =
-        new File(targetDirectory, String.format("chromedriver%s", getExecutableExtension()));
+        new File(targetDirectory, String.format("chromedriver%s", getExecutableExtension(false)));
     final File chromeDriverFileWithVersion = new File(targetDirectory,
-        String.format("chromedriver-%s%s", version, getExecutableExtension()));
+        String.format("chromedriver-%s%s", version, getExecutableExtension(false)));
     chromeDriverFile.renameTo(chromeDriverFileWithVersion);
     return chromeDriverFileWithVersion;
   }
 
-  private static String getExecutableExtension() {
+  private static String getExecutableExtension(final boolean forRegex) {
     if (SystemUtils.IS_OS_WINDOWS) {
+      if (forRegex) {
+        return "//.exe";
+      }
       return ".exe";
     }
     return "";
