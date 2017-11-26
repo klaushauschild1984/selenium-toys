@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 /**
  * A web driver factory creates a web driver and initializes it.
  */
-public interface WebDriverFactory {
+public interface WebdriverFactory {
 
   /**
    * Creates the web driver and initializes it.

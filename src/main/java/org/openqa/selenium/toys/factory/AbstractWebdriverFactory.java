@@ -11,7 +11,7 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 import com.google.common.collect.Maps;
 
-public abstract class AbstractWebDriverFactory implements WebDriverFactory {
+public abstract class AbstractWebdriverFactory implements WebdriverFactory {
 
   @Override
   public WebDriver create(final Class<?> testClass) {

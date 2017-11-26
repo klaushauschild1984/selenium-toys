@@ -11,13 +11,13 @@ import org.openqa.selenium.toys.factory.phantomjs.PhantomJSWebdriverFactory;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Implementation of {@link WebDriverFactory} that delegates to the concrete {@link WebDriverFactory
+ * Implementation of {@link WebdriverFactory} that delegates to the concrete {@link WebdriverFactory
  * implementations} and configures common settings.
  */
-public class DelegatingWebDriverFactory extends AbstractWebDriverFactory {
+public class DelegatingWebdriverFactory extends AbstractWebdriverFactory {
 
-  private static final Map<String, WebDriverFactory> WEB_DRIVER_FACTORIES =
-      ImmutableMap.<String, WebDriverFactory>builder() //
+  private static final Map<String, WebdriverFactory> WEB_DRIVER_FACTORIES =
+      ImmutableMap.<String, WebdriverFactory>builder() //
           .put(BrowserType.CHROME, new ChromeWebdriverFactory()) //
           .put(BrowserType.PHANTOMJS, new PhantomJSWebdriverFactory()) //
           .build();
@@ -25,17 +25,17 @@ public class DelegatingWebDriverFactory extends AbstractWebDriverFactory {
   @Override
   protected WebDriver create(final Class<?> testClass, final Webdriver webdriver,
       final Map<String, String> options) {
-    final WebDriverFactory webDriverFactory = getWebDriverFactory(webdriver);
-    return webDriverFactory.create(testClass);
+    final WebdriverFactory webdriverFactory = getWebDriverFactory(webdriver);
+    return webdriverFactory.create(testClass);
   }
 
-  private WebDriverFactory getWebDriverFactory(final Webdriver webdriver) {
+  private WebdriverFactory getWebDriverFactory(final Webdriver webdriver) {
     final String webDriverName = webdriver.value();
-    final WebDriverFactory webDriverFactory = WEB_DRIVER_FACTORIES.get(webDriverName);
-    if (webDriverFactory == null) {
+    final WebdriverFactory webdriverFactory = WEB_DRIVER_FACTORIES.get(webDriverName);
+    if (webdriverFactory == null) {
       throw new AssertionError(String.format("Unknown web driver %s.", webDriverName));
     }
-    return webDriverFactory;
+    return webdriverFactory;
   }
 
 }

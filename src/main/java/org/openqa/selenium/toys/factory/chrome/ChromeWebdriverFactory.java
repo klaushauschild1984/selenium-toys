@@ -11,21 +11,21 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.toys.Webdriver;
-import org.openqa.selenium.toys.factory.AbstractWebDriverFactory;
+import org.openqa.selenium.toys.factory.AbstractWebdriverFactory;
 import org.openqa.selenium.toys.factory.DownloadUtils;
-import org.openqa.selenium.toys.factory.WebDriverFactory;
+import org.openqa.selenium.toys.factory.WebdriverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.PatternFilenameFilter;
 
 /**
- * {@link WebDriverFactory} implementation for Google Chrome using the {@link ChromeDriver}.<br />
+ * {@link WebdriverFactory} implementation for Google Chrome using the {@link ChromeDriver}.<br />
  * As additional initialization step the latest release of the chrome driver will be downloaded from
  * <a href=
  * "http://chromedriver.storage.googleapis.com">http://chromedriver.storage.googleapis.com</a>.
  */
-public class ChromeWebdriverFactory extends AbstractWebDriverFactory {
+public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ChromeWebdriverFactory.class);
 
