@@ -3,9 +3,8 @@ package org.openqa.selenium.toys.factory.chrome;
 import static org.openqa.selenium.remote.BrowserType.CHROME;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.WebDriver;
@@ -28,6 +27,7 @@ import com.google.common.io.PatternFilenameFilter;
  */
 public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
 
+  public static final String WORK_DIRECTORY = CHROME + "_workDirectory";
   public static final String EXPECTED_VERSION = CHROME + "_expectedVersion";
   private static final Logger LOGGER = LoggerFactory.getLogger(ChromeWebdriverFactory.class);
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
@@ -35,7 +35,7 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
 
   private static boolean initialized;
 
-  private static void initialize(final String expectedVersion) {
+  private static void initialize(final String workDirectory, final String expectedVersion) {
     if (initialized) {
       return;
     }
@@ -47,10 +47,8 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
 
     LOGGER.info("Initialize {}", ChromeWebdriverFactory.class);
 
-    final File tempDirectory = new File(System.getProperty("java.io.tmpdir"));
-    final File chromeDriverDirectory = new File(tempDirectory, "chromedriver");
+    final File chromeDriverDirectory = new File(workDirectory, "chromedriver");
     chromeDriverDirectory.mkdir();
-    chromeDriverDirectory.setWritable(true);
     LOGGER.debug("Chromedriver work directory {}", chromeDriverDirectory);
 
     final File chromeDriverExecutable;
@@ -75,17 +73,7 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,
         chromeDriverExecutable.getAbsolutePath());
 
-    LOGGER.debug("" + chromeDriverDirectory.listFiles().length);
-    Arrays.stream(chromeDriverDirectory.listFiles())
-        .forEach(file -> LOGGER.debug(file.getAbsolutePath()));
-
-      try {
-          new ProcessBuilder(chromeDriverExecutable.getAbsolutePath()).start();
-      } catch (IOException e) {
-          LOGGER.error("error", e);
-      }
-
-      initialized = true;
+    initialized = true;
   }
 
   private static File getExistingChromeDriverExecutable(final File chromeDriverDirectory) {
@@ -132,11 +120,9 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
         new File(targetDirectory, String.format("chromedriver%s", getExecutableExtension(false)));
     final File chromeDriverFileWithVersion = new File(targetDirectory,
         String.format("chromedriver-%s%s", version, getExecutableExtension(false)));
-//    chromeDriverFile.renameTo(chromeDriverFileWithVersion);
-//    chromeDriverFileWithVersion.setExecutable(true);
-//    return chromeDriverFileWithVersion;
-    chromeDriverFile.setExecutable(true);
-    return chromeDriverFile;
+    chromeDriverFile.renameTo(chromeDriverFileWithVersion);
+    chromeDriverFileWithVersion.setExecutable(true, false);
+    return chromeDriverFileWithVersion;
   }
 
   private static String getExecutableExtension(final boolean forRegex) {
@@ -152,8 +138,10 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
   @Override
   protected WebDriver create(final Class<?> testClass, final Webdriver webdriver,
       final Map<String, String> options) {
+    final String workDirectory = Optional.ofNullable(options.get(WORK_DIRECTORY))
+        .orElse(System.getProperty("java.io.tmpdir"));
     final String expectedVersion = options.get(EXPECTED_VERSION);
-    initialize(expectedVersion);
+    initialize(workDirectory, expectedVersion);
     return new ChromeDriver();
   }
 
