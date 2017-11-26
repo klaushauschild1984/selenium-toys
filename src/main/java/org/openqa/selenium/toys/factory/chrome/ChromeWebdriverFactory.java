@@ -132,9 +132,11 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
         new File(targetDirectory, String.format("chromedriver%s", getExecutableExtension(false)));
     final File chromeDriverFileWithVersion = new File(targetDirectory,
         String.format("chromedriver-%s%s", version, getExecutableExtension(false)));
-    chromeDriverFile.renameTo(chromeDriverFileWithVersion);
-    chromeDriverFileWithVersion.setExecutable(true);
-    return chromeDriverFileWithVersion;
+//    chromeDriverFile.renameTo(chromeDriverFileWithVersion);
+//    chromeDriverFileWithVersion.setExecutable(true);
+//    return chromeDriverFileWithVersion;
+    chromeDriverFile.setExecutable(true);
+    return chromeDriverFile;
   }
 
   private static String getExecutableExtension(final boolean forRegex) {
