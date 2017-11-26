@@ -48,7 +48,7 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     final File tempDirectory = new File(System.getProperty("java.io.tmpdir"));
     final File chromeDriverDirectory = new File(tempDirectory, "chromedriver");
     chromeDriverDirectory.mkdir();
-    LOGGER.debug("Store chromedriver locally at {}", chromeDriverDirectory);
+    LOGGER.debug("Chromedriver work directory {}", chromeDriverDirectory);
 
     final File chromeDriverExecutable;
 
@@ -119,13 +119,14 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     final File chromeDriverFileWithVersion = new File(targetDirectory,
         String.format("chromedriver-%s%s", version, getExecutableExtension(false)));
     chromeDriverFile.renameTo(chromeDriverFileWithVersion);
+    chromeDriverFileWithVersion.setExecutable(true);
     return chromeDriverFileWithVersion;
   }
 
   private static String getExecutableExtension(final boolean forRegex) {
     if (SystemUtils.IS_OS_WINDOWS) {
       if (forRegex) {
-        return "//.exe";
+        return "\\.exe";
       }
       return ".exe";
     }
