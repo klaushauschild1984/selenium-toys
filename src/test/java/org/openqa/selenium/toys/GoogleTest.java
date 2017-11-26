@@ -1,7 +1,7 @@
 package org.openqa.selenium.toys;
 
 import static org.openqa.selenium.remote.BrowserType.CHROME;
-import static org.openqa.selenium.toys.factory.AbstractWebDriverFactory.IMPLICITLY_WAIT;
+import static org.openqa.selenium.toys.Webdriver.IMPLICITLY_WAIT;
 
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 })
 @EntryPoint("http://www.google.com")
 @TakeScreenshots(baseDirectory = "C:\\Workspaces\\_\\selenium-toys\\target\\screenshots")
-public class GoogleTest extends SeleniumTests {
+public class GoogleTest extends SeleniumTestNGTests {
 
   @Test
   public void failingCalculatorTest() {

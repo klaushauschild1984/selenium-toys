@@ -18,6 +18,8 @@ import org.openqa.selenium.remote.BrowserType;
 @Target(ElementType.TYPE)
 public @interface Webdriver {
 
+  public static final String IMPLICITLY_WAIT = "implicitlyWait";
+
   /**
    * Valid values are the constants defined in {@link BrowserType}.
    * 

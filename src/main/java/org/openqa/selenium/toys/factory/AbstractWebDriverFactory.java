@@ -1,5 +1,7 @@
 package org.openqa.selenium.toys.factory;
 
+import static org.openqa.selenium.toys.Webdriver.IMPLICITLY_WAIT;
+
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -10,8 +12,6 @@ import org.springframework.core.annotation.AnnotationUtils;
 import com.google.common.collect.Maps;
 
 public abstract class AbstractWebDriverFactory implements WebDriverFactory {
-
-  public static final String IMPLICITLY_WAIT = "implicitlyWait";
 
   @Override
   public WebDriver create(final Class<?> testClass) {
