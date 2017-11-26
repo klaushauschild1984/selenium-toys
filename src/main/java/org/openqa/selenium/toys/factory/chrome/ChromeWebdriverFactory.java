@@ -50,6 +50,7 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     final File tempDirectory = new File(System.getProperty("java.io.tmpdir"));
     final File chromeDriverDirectory = new File(tempDirectory, "chromedriver");
     chromeDriverDirectory.mkdir();
+    chromeDriverDirectory.setWritable(true);
     LOGGER.debug("Chromedriver work directory {}", chromeDriverDirectory);
 
     final File chromeDriverExecutable;
@@ -74,8 +75,9 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,
         chromeDriverExecutable.getAbsolutePath());
 
+    LOGGER.debug("" + chromeDriverDirectory.listFiles().length);
     Arrays.stream(chromeDriverDirectory.listFiles())
-        .forEach(file -> LOGGER.trace(file.getAbsolutePath()));
+        .forEach(file -> LOGGER.debug(file.getAbsolutePath()));
 
       try {
           new ProcessBuilder(chromeDriverExecutable.getAbsolutePath()).start();
