@@ -4,7 +4,6 @@ import static org.openqa.selenium.remote.BrowserType.CHROME;
 
 import java.io.File;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.WebDriver;
@@ -27,10 +26,8 @@ import com.google.common.io.PatternFilenameFilter;
  */
 public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ChromeWebdriverFactory.class);
-
   public static final String EXPECTED_VERSION = CHROME + "_expectedVersion";
-
+  private static final Logger LOGGER = LoggerFactory.getLogger(ChromeWebdriverFactory.class);
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
   private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
 
@@ -78,8 +75,8 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
   }
 
   private static File getExistingChromeDriverExecutable(final File chromeDriverDirectory) {
-    final File[] files = chromeDriverDirectory
-        .listFiles(new PatternFilenameFilter(Pattern.compile("chromedriver*.\\.exe")));
+    final File[] files = chromeDriverDirectory.listFiles(
+        new PatternFilenameFilter(String.format("chromedriver*.\\%s", getExecutableExtension())));
     if (files == null || files.length != 1) {
       return null;
     }
@@ -117,11 +114,19 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
         DOWNLOAD_URL + String.format("/%s/chromedriver_%s.zip", version, system);
     LOGGER.debug("Download chromedriver from {}", downloadUrl);
     DownloadUtils.downloadZipAndExtract(downloadUrl, targetDirectory);
-    final File chromeDriverFile = new File(targetDirectory, "chromedriver.exe");
-    final File chromeDriverFileWithVersion =
-        new File(targetDirectory, String.format("chromedriver-%s.exe", version));
+    final File chromeDriverFile =
+        new File(targetDirectory, String.format("chromedriver%s", getExecutableExtension()));
+    final File chromeDriverFileWithVersion = new File(targetDirectory,
+        String.format("chromedriver-%s%s", version, getExecutableExtension()));
     chromeDriverFile.renameTo(chromeDriverFileWithVersion);
     return chromeDriverFileWithVersion;
+  }
+
+  private static String getExecutableExtension() {
+    if (SystemUtils.IS_OS_WINDOWS) {
+      return ".exe";
+    }
+    return "";
   }
 
   @Override
