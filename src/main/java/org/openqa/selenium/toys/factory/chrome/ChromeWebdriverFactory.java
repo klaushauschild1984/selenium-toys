@@ -3,6 +3,8 @@ package org.openqa.selenium.toys.factory.chrome;
 import static org.openqa.selenium.remote.BrowserType.CHROME;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -71,7 +73,17 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     LOGGER.info("Install {} for Selenium.", chromeDriverExecutable);
     System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,
         chromeDriverExecutable.getAbsolutePath());
-    initialized = true;
+
+    Arrays.stream(chromeDriverDirectory.listFiles())
+        .forEach(file -> LOGGER.trace(file.getAbsolutePath()));
+
+      try {
+          new ProcessBuilder(chromeDriverExecutable.getAbsolutePath()).start();
+      } catch (IOException e) {
+          LOGGER.error("error", e);
+      }
+
+      initialized = true;
   }
 
   private static File getExistingChromeDriverExecutable(final File chromeDriverDirectory) {
