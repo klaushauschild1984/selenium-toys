@@ -5,10 +5,11 @@ import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.toys.Webdriver;
 import org.openqa.selenium.toys.factory.AbstractWebDriverFactory;
 import org.openqa.selenium.toys.factory.DownloadUtils;
 
-public class PhantomJSWebDriverFactory extends AbstractWebDriverFactory {
+public class PhantomJSWebdriverFactory extends AbstractWebDriverFactory {
 
   private static boolean initialized = false;
 
@@ -31,8 +32,7 @@ public class PhantomJSWebDriverFactory extends AbstractWebDriverFactory {
   }
 
   @Override
-  protected WebDriver create(final Class<?> testClass,
-      final org.openqa.selenium.toys.WebDriver webDriverAnnotation,
+  protected WebDriver create(final Class<?> testClass, final Webdriver webdriver,
       final Map<String, String> options) {
     initialize();
     return new PhantomJSDriver();

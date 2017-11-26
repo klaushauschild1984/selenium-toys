@@ -4,15 +4,16 @@ import static org.openqa.selenium.remote.BrowserType.CHROME;
 import static org.openqa.selenium.toys.factory.AbstractWebDriverFactory.IMPLICITLY_WAIT;
 
 import org.openqa.selenium.By;
+import org.testng.annotations.Test;
 
-@WebDriver(value = CHROME, options = { //
+@Webdriver(value = CHROME, options = { //
     IMPLICITLY_WAIT, "500", //
 })
 @EntryPoint("http://www.google.com")
 @TakeScreenshots(baseDirectory = "C:\\Workspaces\\_\\selenium-toys\\target\\screenshots")
 public class GoogleTest extends SeleniumTests {
 
-  // @Test
+  @Test
   public void failingCalculatorTest() {
     type("2+2") //
         .on(By.id("lst-ib")) //

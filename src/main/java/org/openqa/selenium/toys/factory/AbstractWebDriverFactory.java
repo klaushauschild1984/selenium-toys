@@ -3,7 +3,8 @@ package org.openqa.selenium.toys.factory;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.toys.WebDriver;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.toys.Webdriver;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.google.common.collect.Maps;
@@ -13,16 +14,16 @@ public abstract class AbstractWebDriverFactory implements WebDriverFactory {
   public static final String IMPLICITLY_WAIT = "implicitlyWait";
 
   @Override
-  public org.openqa.selenium.WebDriver create(final Class<?> testClass) {
-    final WebDriver webDriverAnnotation = getWebDriverAnnotation(testClass);
-    final Map<String, String> options = toMap(webDriverAnnotation.options());
-    final org.openqa.selenium.WebDriver webDriver = create(testClass, webDriverAnnotation, options);
+  public WebDriver create(final Class<?> testClass) {
+    final Webdriver webdriver = getWebDriverAnnotation(testClass);
+    final Map<String, String> options = toMap(webdriver.options());
+    final org.openqa.selenium.WebDriver webDriver = create(testClass, webdriver, options);
     configureWebDriver(webDriver, options);
     return webDriver;
   }
 
   protected abstract org.openqa.selenium.WebDriver create(final Class<?> testClass,
-      final WebDriver webDriverAnnotation, final Map<String, String> options);
+      final Webdriver webdriver, final Map<String, String> options);
 
   protected void configureWebDriver(final org.openqa.selenium.WebDriver webDriver,
       final Map<String, String> options) {
@@ -33,15 +34,14 @@ public abstract class AbstractWebDriverFactory implements WebDriverFactory {
     }
   }
 
-  private WebDriver getWebDriverAnnotation(final Class<?> testClass) {
-    final WebDriver webDriverAnnotation =
-        AnnotationUtils.findAnnotation(testClass, WebDriver.class);
-    if (webDriverAnnotation == null) {
+  private Webdriver getWebDriverAnnotation(final Class<?> testClass) {
+    final Webdriver webdriver = AnnotationUtils.findAnnotation(testClass, Webdriver.class);
+    if (webdriver == null) {
       throw new AssertionError(String.format(
           "The test class %s misses the %s annotation to specify the implementation to use.",
-          testClass.getName(), WebDriver.class.getName()));
+          testClass.getName(), Webdriver.class.getName()));
     }
-    return webDriverAnnotation;
+    return webdriver;
   }
 
   private Map<String, String> toMap(final String[] keyValues) {

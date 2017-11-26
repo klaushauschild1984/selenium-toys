@@ -16,7 +16,7 @@ import org.openqa.selenium.remote.BrowserType;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface WebDriver {
+public @interface Webdriver {
 
   /**
    * Valid values are the constants defined in {@link BrowserType}.
