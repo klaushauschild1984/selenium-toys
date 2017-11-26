@@ -71,7 +71,7 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
       throw new UnsupportedOperationException();
     }
 
-    LOGGER.info("Install {} for Selnium.", chromeDriverExecutable);
+    LOGGER.info("Install {} for Selenium.", chromeDriverExecutable);
     System.setProperty(ChromeDriverService.CHROME_DRIVER_EXE_PROPERTY,
         chromeDriverExecutable.getAbsolutePath());
     initialized = true;
