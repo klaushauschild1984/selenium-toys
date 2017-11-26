@@ -1,31 +1,33 @@
 package org.openqa.selenium.toys;
 
-import java.lang.reflect.Method;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.toys.factory.DelegatingWebDriverFactory;
-import org.openqa.selenium.toys.factory.WebDriverFactory;
+import org.openqa.selenium.toys.factory.DelegatingWebdriverFactory;
+import org.openqa.selenium.toys.factory.WebdriverFactory;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.testng.ITestResult;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
 
-public abstract class SeleniumTests {
+/**
+ * @deprecated do not extends this class directly.
+ */
+@Deprecated
+abstract class SeleniumTests {
 
-  private WebDriverFactory webDriverFactory = new DelegatingWebDriverFactory();
+  private WebdriverFactory webdriverFactory = new DelegatingWebdriverFactory();
   private WebDriver webDriver;
   private Screenshots screenshots;
 
-  @BeforeMethod
-  public void before(final Method method) {
+  /**
+   * @deprecated do not invoke this directly
+   */
+  @Deprecated
+  protected void before() {
     // create the web driver
     final Class<?> testClass = this.getClass();
-    webDriver = webDriverFactory.create(testClass);
+    webDriver = webdriverFactory.create(testClass);
 
     // inject the entry point
     final EntryPoint entryPointAnnotation =
@@ -46,10 +48,13 @@ public abstract class SeleniumTests {
     }
   }
 
-  @AfterMethod
-  public void after(final ITestResult testResult) {
+  /**
+   * @deprecated do not invoke this directly
+   */
+  @Deprecated
+  public void after(final boolean hasFailure) {
     if (screenshots != null) {
-      if (testResult.getStatus() == ITestResult.FAILURE) {
+      if (hasFailure) {
         screenshots.failure();
       } else {
         screenshots.finish();
