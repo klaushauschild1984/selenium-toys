@@ -61,7 +61,7 @@ abstract class SeleniumTests {
       }
     }
 
-    webDriver.close();
+    webDriver.quit();
   }
 
   /**

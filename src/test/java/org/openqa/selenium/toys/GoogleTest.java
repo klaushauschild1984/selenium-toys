@@ -8,14 +8,14 @@ import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
 @Webdriver(value = CHROME, options = { //
-    WORK_DIRECTORY, ".", //
+    WORK_DIRECTORY, "target", //
     IMPLICITLY_WAIT, "500", //
 })
 @EntryPoint("http://www.google.com")
 public class GoogleTest extends SeleniumTestNGTests {
 
   @Test
-  public void failingCalculatorTest() {
+  public void calculatorTest() {
     type("2+2") //
         .on(By.id("lst-ib")) //
         .submit();
