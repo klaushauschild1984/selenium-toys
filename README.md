@@ -68,7 +68,7 @@ To use Selenium Toys just add the following repository and dependency to you `po
 ## Supported test backends
 
 There is no hard dependency to only one test backend like [TestNG](http://testng.org) or [JUnit](http://junit.org).
-Extend and use `SeleniumTestNGTests` if you prefer TestNG. Extend and use `SeleniumJUnit4Tests` if you a JUnit4 guy.
+Extend and use `SeleniumTestNGTests` if you prefer TestNG. Extend and use `SeleniumJUnit4Tests` if you are a JUnit4 guy.
 
 ## Screenshot compare
 
@@ -103,6 +103,11 @@ its key value pairs lined up in one row.
 
   With this option you can specify the version of the executable if you need. Omit this option and the latest version
   of the executable will be downloaded and used. 
+  
+* `ChromeWebdriverFactory.WORK_DIRECTORY`
+
+  Via this option the working directory for the chrome driver is specified. There will be the executable located and if
+  not present then downloaded. Leave it unspecified to use the systems temporary directory.
 
 ### [PhantomJS](https://github.com/detro/ghostdriver)
 
