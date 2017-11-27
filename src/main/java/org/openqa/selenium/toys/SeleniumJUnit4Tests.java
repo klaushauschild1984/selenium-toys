@@ -12,9 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hamcrest.Description;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 
 public abstract class SeleniumJUnit4Tests extends SeleniumTests {
 
@@ -51,7 +51,7 @@ public abstract class SeleniumJUnit4Tests extends SeleniumTests {
     }
 
     @Override
-    protected void starting(final org.junit.runner.Description description) {
+    protected void starting(final Description description) {
       for (final Method method : getMethods(testInstance.getClass(), JUnitBefore.class)) {
         try {
           method.invoke(testInstance, method);
@@ -61,10 +61,12 @@ public abstract class SeleniumJUnit4Tests extends SeleniumTests {
       }
     }
 
+    @Override
     protected void succeeded(final Description description) {
       invokeAfterMethods(true);
     }
 
+    @Override
     protected void failed(final Throwable e, final Description description) {
       invokeAfterMethods(false);
     }
