@@ -3,6 +3,7 @@ package org.openqa.selenium.toys;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.InvocationTargetException;
@@ -12,59 +13,76 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Description;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 
 public abstract class SeleniumJUnit4Tests extends SeleniumTests {
 
   @Rule
-  public AfterWithResultRule afterWithResultRule = new AfterWithResultRule(this);
+  public JUnitBeforeAndAfterHandler junitBeforeAndAfterHandler =
+      new JUnitBeforeAndAfterHandler(this);
 
-  @Before
-  public void before() {
-    super.before();
+  @JUnitBefore
+  public void before(final Method method) {
+    super.before(method);
   }
 
-  @AfterWithResult
-  public void after(final boolean success) {
-    super.after(!success);
+  @JUnitAfter
+  public void after(final Method method, final boolean success) {
+    super.after(method, !success);
   }
 
   @Retention(RUNTIME)
   @Target(METHOD)
-  @interface AfterWithResult {
+  @interface JUnitBefore {
   }
 
-  class AfterWithResultRule extends TestWatcher {
+  @Retention(RUNTIME)
+  @Target(METHOD)
+  @interface JUnitAfter {
+  }
 
-    private final Object testClassInstance;
+  class JUnitBeforeAndAfterHandler extends TestWatcher {
 
-    AfterWithResultRule(final Object testClassInstance) {
-      this.testClassInstance = testClassInstance;
+    private final Object testInstance;
+
+    JUnitBeforeAndAfterHandler(final Object testInstance) {
+      this.testInstance = testInstance;
     }
 
-    protected void succeeded(final Description description) {
-      invokeAfterHackMethods(true);
-    }
-
-    protected void failed(final Throwable e, final Description description) {
-      invokeAfterHackMethods(false);
-    }
-
-    void invokeAfterHackMethods(final boolean successful) {
-      for (final Method afterHackMethod : getMethods(this.testClassInstance.getClass())) {
+    @Override
+    protected void starting(final org.junit.runner.Description description) {
+      for (final Method method : getMethods(testInstance.getClass(), JUnitBefore.class)) {
         try {
-          afterHackMethod.invoke(this.testClassInstance, successful);
+          method.invoke(testInstance, method);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-          throw new RuntimeException("error while invoking afterHackMethod " + afterHackMethod);
+          throw new RuntimeException("error while invoking method " + method);
         }
       }
     }
 
-    private List<Method> getMethods(final Class<?> testClass) {
+    protected void succeeded(final Description description) {
+      invokeAfterMethods(true);
+    }
+
+    protected void failed(final Throwable e, final Description description) {
+      invokeAfterMethods(false);
+    }
+
+    void invokeAfterMethods(final boolean successful) {
+      for (final Method method : getMethods(testInstance.getClass(), JUnitAfter.class)) {
+        try {
+          method.invoke(testInstance, method, successful);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+          throw new RuntimeException("error while invoking method " + method);
+        }
+      }
+    }
+
+    private List<Method> getMethods(final Class<?> testClass,
+        final Class<? extends Annotation> annotationType) {
       return Arrays.stream(testClass.getMethods()) //
-          .filter(method -> method.isAnnotationPresent(AfterWithResult.class)) //
+          .filter(method -> method.isAnnotationPresent(annotationType)) //
           .collect(Collectors.toList());
     }
   }

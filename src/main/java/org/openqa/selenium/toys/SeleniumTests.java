@@ -1,5 +1,8 @@
 package org.openqa.selenium.toys;
 
+import java.lang.reflect.Method;
+import java.util.Optional;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -24,40 +27,35 @@ abstract class SeleniumTests {
    * @deprecated do not invoke this directly
    */
   @Deprecated
-  protected void before() {
+  protected void before(final Method method) {
     // create the web driver
     final Class<?> testClass = this.getClass();
     webDriver = webdriverFactory.create(testClass);
 
     // inject the entry point
-    final EntryPoint entryPointAnnotation =
-        AnnotationUtils.findAnnotation(testClass, EntryPoint.class);
-    if (entryPointAnnotation == null) {
-      throw new AssertionError(String.format(
-          "Test class %s is not annotated with %s to specify the entry point of the test.",
-          testClass.getName(), EntryPoint.class.getName()));
-    }
-    webDriver.get(entryPointAnnotation.value());
+    final EntryPoint entryPoint =
+        Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, EntryPoint.class)) //
+            .orElseThrow(() -> new AssertionError(String.format(
+                "Test class %s is not annotated with %s to specify the entry point of the test.",
+                testClass.getName(), EntryPoint.class.getName())));
+    webDriver.get(entryPoint.value());
 
     // take screenshots
-    final TakeScreenshots takeScreenshotAnnotation =
-        AnnotationUtils.findAnnotation(testClass, TakeScreenshots.class);
-    if (takeScreenshotAnnotation != null) {
-      screenshots = new Screenshots(webDriver, takeScreenshotAnnotation, getClass());
-      screenshots.start();
-    }
+    Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, TakeScreenshots.class)) //
+        .ifPresent(takeScreenshots -> {
+          screenshots = new Screenshots(webDriver, takeScreenshots, getClass());
+          screenshots.start(method);
+        });
   }
 
   /**
    * @deprecated do not invoke this directly
    */
   @Deprecated
-  public void after(final boolean hasFailure) {
+  public void after(final Method method, final boolean hasFailure) {
     if (screenshots != null) {
       if (hasFailure) {
-        screenshots.failure();
-      } else {
-        screenshots.finish();
+        screenshots.failure(method);
       }
     }
 
