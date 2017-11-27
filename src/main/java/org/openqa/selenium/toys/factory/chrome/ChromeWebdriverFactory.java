@@ -4,7 +4,10 @@ import static org.openqa.selenium.remote.BrowserType.CHROME;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.WebDriver;
@@ -29,10 +32,11 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
 
   public static final String WORK_DIRECTORY = CHROME + "_workDirectory";
   public static final String EXPECTED_VERSION = CHROME + "_expectedVersion";
+  public static final Pattern EXECUTABLE_PATTERN =
+      Pattern.compile(String.format("chromedriver-(?<version>.*)%s", getExecutableExtension(true)));
   private static final Logger LOGGER = LoggerFactory.getLogger(ChromeWebdriverFactory.class);
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
   private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
-
   private static boolean initialized;
 
   private static void initialize(final String workDirectory, final String expectedVersion) {
@@ -66,7 +70,17 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
       chromeDriverExecutable = downloadChromeDriver(chromeDriverDirectory, expectedVersion);
     } else {
       // version expected; there is a local chromedriver
-      throw new UnsupportedOperationException();
+      final Matcher matcher = EXECUTABLE_PATTERN.matcher(existingChromeDriverExecutable.getName());
+      matcher.find();
+      final String existingVersion = matcher.group("version");
+      if (Objects.equals(existingVersion, expectedVersion)) {
+        chromeDriverExecutable = existingChromeDriverExecutable;
+      } else {
+        LOGGER.debug("Expect version {} but found {}. Remove it.", existingVersion,
+            expectedVersion);
+        existingChromeDriverExecutable.delete();
+        chromeDriverExecutable = downloadChromeDriver(chromeDriverDirectory, expectedVersion);
+      }
     }
 
     LOGGER.info("Install {} for Selenium.", chromeDriverExecutable);
@@ -77,8 +91,8 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
   }
 
   private static File getExistingChromeDriverExecutable(final File chromeDriverDirectory) {
-    final File[] files = chromeDriverDirectory.listFiles(
-        new PatternFilenameFilter(String.format("chromedriver.*%s", getExecutableExtension(true))));
+    final File[] files =
+        chromeDriverDirectory.listFiles(new PatternFilenameFilter(EXECUTABLE_PATTERN));
     if (files == null || files.length != 1) {
       return null;
     }
