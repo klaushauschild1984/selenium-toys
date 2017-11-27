@@ -5,6 +5,7 @@ import static org.openqa.selenium.toys.Webdriver.IMPLICITLY_WAIT;
 import static org.openqa.selenium.toys.factory.chrome.ChromeWebdriverFactory.WORK_DIRECTORY;
 
 import org.openqa.selenium.By;
+import org.testng.annotations.Test;
 
 @Webdriver(value = CHROME, options = { //
     WORK_DIRECTORY, ".", //
@@ -13,7 +14,7 @@ import org.openqa.selenium.By;
 @EntryPoint("http://www.google.com")
 public class GoogleTest extends SeleniumTestNGTests {
 
-  // @Test
+  @Test
   public void failingCalculatorTest() {
     type("2+2") //
         .on(By.id("lst-ib")) //

@@ -14,7 +14,7 @@ import org.openqa.selenium.toys.SeleniumTestNGTests;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
-@WebDriver(value = CHROME)
+@Webdriver(value = CHROME)
 @EntryPoint("http://www.google.com")
 public class GoogleTest extends SeleniumTestNGTests {
 
@@ -31,7 +31,7 @@ public class GoogleTest extends SeleniumTestNGTests {
 }
 ```
 The above code demonstrates the easy usage. For setup just extend `SeleniumTests` and annotate your test with
-`@WebDriver` and `@EntryPoint`. This annotations define the use selenium web driver and entry point of the test case.
+`@Webdriver` and `@EntryPoint`. This annotations define the use selenium web driver and entry point of the test case.
 The specified web driver will be automatically downloaded and installed. For further details see the corresponding
 javadoc of the web driver factory. There are a set of common settings for each web driver and each web driver factory
 can gives you the opportunity to make web driver specific configurations.

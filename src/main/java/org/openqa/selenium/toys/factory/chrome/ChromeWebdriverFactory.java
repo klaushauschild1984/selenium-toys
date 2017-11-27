@@ -101,7 +101,14 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
     } else if (SystemUtils.IS_OS_MAC) {
       system = "mac64";
     } else if (SystemUtils.IS_OS_LINUX) {
-      system = "linux32";
+      final StringBuilder linuxBuilder = new StringBuilder("linux");
+      // TODO this property does not reflect the OS architecture, it is the "bitness" of the VM
+      if (SystemUtils.OS_ARCH.contains("64")) {
+        linuxBuilder.append("64");
+      } else {
+        linuxBuilder.append("32");
+      }
+      system = linuxBuilder.toString();
     } else {
       throw new UnsupportedOperationException(String.format("Unsupported operation system: %s %s",
           SystemUtils.OS_NAME, SystemUtils.OS_VERSION));
