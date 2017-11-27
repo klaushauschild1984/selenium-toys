@@ -1,4 +1,4 @@
-# Selenium Toys [![Build Status](https://travis-ci.org/klaushauschild1984/selenium-toys.svg?branch=master)](https://travis-ci.org/klaushauschild1984/selenium-toys) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=de.hauschild.selenium-toys%3Aselenium-toys)](https://sonarcloud.io/dashboard?id=de.hauschild.selenium-toys%3Aselenium-toys)
+# Selenium Toys [![Build Status](https://travis-ci.org/klaushauschild1984/selenium-toys.svg?branch=master)](https://travis-ci.org/klaushauschild1984/selenium-toys) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=org.seleniumhq.selenium-toys%3Aselenium-toys)](https://sonarcloud.io/dashboard?id=org.seleniumhq.selenium-toys%3Aselenium-toys)
 
 
 This project provides a rich toolbox for easy writing [Selenium](http://www.seleniumhq.org/) test cases.
