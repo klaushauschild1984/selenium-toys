@@ -78,7 +78,9 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
       } else {
         LOGGER.debug("Expect version {} but found {}. Remove it.", existingVersion,
             expectedVersion);
-        existingChromeDriverExecutable.delete();
+        if (!existingChromeDriverExecutable.delete()) {
+          throw new RuntimeException();
+        }
         chromeDriverExecutable = downloadChromeDriver(chromeDriverDirectory, expectedVersion);
       }
     }
@@ -141,8 +143,12 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
         new File(targetDirectory, String.format("chromedriver%s", getExecutableExtension(false)));
     final File chromeDriverFileWithVersion = new File(targetDirectory,
         String.format("chromedriver-%s%s", version, getExecutableExtension(false)));
-    chromeDriverFile.renameTo(chromeDriverFileWithVersion);
-    chromeDriverFileWithVersion.setExecutable(true, false);
+    if (!chromeDriverFile.renameTo(chromeDriverFileWithVersion)) {
+      throw new RuntimeException();
+    }
+    if (!chromeDriverFileWithVersion.setExecutable(true, false)) {
+      throw new RuntimeException();
+    }
     return chromeDriverFileWithVersion;
   }
 
