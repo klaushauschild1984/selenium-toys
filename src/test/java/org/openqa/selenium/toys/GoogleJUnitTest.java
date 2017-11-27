@@ -21,7 +21,7 @@ public class GoogleJUnitTest extends SeleniumJUnit4Tests {
         .submit();
 
     expect(By.id("cwtltblr")) //
-        .hasText("5");
+        .hasText("4");
   }
 
 }
