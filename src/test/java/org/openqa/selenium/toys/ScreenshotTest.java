@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
     WORK_DIRECTORY, "target", //
 })
 @EntryPoint("http://www.google.com")
-@TakeScreenshots(baseDirectory = "target/screenshots")
+@TakeScreenshots(baseDirectory = "target/screenshots", compareToExistingScreenshots = true)
 public class ScreenshotTest extends SeleniumTestNGTests {
 
   @Test
