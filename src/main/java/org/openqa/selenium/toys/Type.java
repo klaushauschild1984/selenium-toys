@@ -23,16 +23,18 @@ class Type {
 
   private final WebDriver webDriver;
   private final String text;
+  private final Runnable screenshotTaker;
 
-  Type(final WebDriver webDriver, final String text) {
+  Type(final WebDriver webDriver, final String text, final Runnable screenshotTaker) {
     this.webDriver = webDriver;
     this.text = text;
+    this.screenshotTaker = screenshotTaker;
   }
 
   public Submit on(final By by) {
     final WebElement element = webDriver.findElement(by);
     element.sendKeys(text);
-    return new Submit(element);
+    return new Submit(element, screenshotTaker);
   }
 
 }

@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +40,7 @@ class Screenshots {
 
   private final WebDriver webDriver;
   private final File baseDirectory;
-  private final Map<Method, AtomicInteger> indices = Maps.newHashMap();
+  private final Map<String, AtomicInteger> indices = Maps.newHashMap();
 
   public Screenshots(final WebDriver webDriver, final TakeScreenshots takeScreenshots,
       final Class<? extends SeleniumTests> clazz) {
@@ -56,23 +55,23 @@ class Screenshots {
     LOGGER.debug("Take screenshots for {}. Store in {}", clazz.getName(), baseDirectory);
   }
 
-  void start(final Method method) {
-    indices.put(method, new AtomicInteger());
-    screenshot(method, "start");
+  void start(final String methodName) {
+    indices.put(methodName, new AtomicInteger());
+    screenshot(methodName, "start");
   }
 
-  void failure(final Method method) {
-    screenshot(method, "failure");
+  void failure(final String methodName) {
+    screenshot(methodName, "failure");
   }
 
-  void screenshot(final Method method, final String label) {
-    final File methodDirectory = new File(baseDirectory, method.getName());
+  void screenshot(final String methodName, final String label) {
+    final File methodDirectory = new File(baseDirectory, methodName);
     methodDirectory.mkdir();
     final BufferedImage screenshot = takeScreenshot();
     try {
-      final int index = indices.get(method).getAndIncrement();
-      final File screenshotFile = new File(methodDirectory,
-          String.format("%s-%s.png", StringUtils.leftPad("" + index, 3, "0"), label));
+      final int index = indices.get(methodName).getAndIncrement();
+      final File screenshotFile = new File(methodDirectory, String.format("%s%s.png",
+          StringUtils.leftPad("" + index, 3, "0"), label != null ? "-" + label : ""));
       LOGGER.debug("Take screenshot {}", screenshotFile);
       ImageIO.write(screenshot, "png", screenshotFile);
     } catch (final IOException exception) {

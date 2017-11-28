@@ -18,6 +18,7 @@ package org.openqa.selenium.toys;
 import static org.openqa.selenium.remote.BrowserType.CHROME;
 import static org.openqa.selenium.toys.factory.chrome.ChromeWebdriverFactory.WORK_DIRECTORY;
 
+import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
 @Webdriver(value = CHROME, options = { //
@@ -29,7 +30,9 @@ public class ScreenshotTest extends SeleniumTestNGTests {
 
   @Test
   public void test() {
-
+    type("2+2") //
+        .on(By.id("lst-ib")) //
+        .enter();
   }
 
 }

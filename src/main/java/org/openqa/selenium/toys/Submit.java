@@ -21,17 +21,21 @@ import org.openqa.selenium.WebElement;
 class Submit {
 
   private final WebElement element;
+  private final Runnable screenshotTaker;
 
-  Submit(final WebElement element) {
+  Submit(final WebElement element, final Runnable screenshotTaker) {
     this.element = element;
+    this.screenshotTaker = screenshotTaker;
   }
 
   public void enter() {
     element.sendKeys(Keys.ENTER);
+    screenshotTaker.run();
   }
 
   public void submit() {
     element.submit();
+    screenshotTaker.run();
   }
 
 }

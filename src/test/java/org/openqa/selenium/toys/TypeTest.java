@@ -28,7 +28,7 @@ public class TypeTest {
     final WebDriver webDriver = Mockito.mock(WebDriver.class);
     final WebElement webElement = Mockito.mock(WebElement.class);
 
-    final Type type = new Type(webDriver, "text");
+    final Type type = new Type(webDriver, "text", () -> {});
     final By byId = By.id("id");
     Mockito.when(webDriver.findElement(byId)).thenReturn(webElement);
     type.on(byId);

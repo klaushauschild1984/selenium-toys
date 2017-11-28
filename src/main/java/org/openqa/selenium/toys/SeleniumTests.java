@@ -59,7 +59,7 @@ abstract class SeleniumTests {
     Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, TakeScreenshots.class)) //
         .ifPresent(takeScreenshots -> {
           screenshots = new Screenshots(webDriver, takeScreenshots, getClass());
-          screenshots.start(method);
+          screenshots.start(method.getName());
         });
   }
 
@@ -70,7 +70,7 @@ abstract class SeleniumTests {
   public void after(final Method method, final boolean hasFailure) {
     if (screenshots != null) {
       if (hasFailure) {
-        screenshots.failure(method);
+        screenshots.failure(method.getName());
       }
     }
 
@@ -87,7 +87,8 @@ abstract class SeleniumTests {
 
   protected Type type(final String text) {
     waitForDocumentReady();
-    return new Type(webDriver, text);
+    final String methodName = getInvokingMethodName();
+    return new Type(webDriver, text, getScreenshotTaker(methodName));
   }
 
   protected Expect expect(final By by) {
@@ -99,6 +100,21 @@ abstract class SeleniumTests {
     waitForDocumentReady();
     final WebElement element = webDriver.findElement(on);
     element.click();
+    getScreenshotTaker(getInvokingMethodName()).run();
+  }
+
+  private Runnable getScreenshotTaker(final String methodName) {
+    return () -> {
+      if (screenshots == null) {
+        return;
+      }
+      waitForDocumentReady();
+      screenshots.screenshot(methodName, null);
+    };
+  }
+
+  private String getInvokingMethodName() {
+    return Thread.currentThread().getStackTrace()[3].getMethodName();
   }
 
   private void waitForDocumentReady() {
