@@ -43,8 +43,8 @@ public abstract class SeleniumJUnit4Tests extends SeleniumTests {
   }
 
   @JUnitAfter
-  public void after(final Method method, final boolean success) {
-    super.after(method, !success);
+  public void after(final Method method, final boolean success, final Throwable cause) {
+    super.after(method, !success, cause);
   }
 
   @Retention(RUNTIME)
@@ -78,18 +78,18 @@ public abstract class SeleniumJUnit4Tests extends SeleniumTests {
 
     @Override
     protected void succeeded(final Description description) {
-      invokeAfterMethods(true);
+      invokeAfterMethods(true, null);
     }
 
     @Override
-    protected void failed(final Throwable e, final Description description) {
-      invokeAfterMethods(false);
+    protected void failed(final Throwable cause, final Description description) {
+      invokeAfterMethods(false, cause);
     }
 
-    void invokeAfterMethods(final boolean successful) {
+    void invokeAfterMethods(final boolean successful, final Throwable cause) {
       for (final Method method : getMethods(testInstance.getClass(), JUnitAfter.class)) {
         try {
-          method.invoke(testInstance, method, successful);
+          method.invoke(testInstance, method, successful, cause);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
           throw new RuntimeException("error while invoking method " + method);
         }

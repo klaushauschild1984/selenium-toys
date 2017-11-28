@@ -31,7 +31,7 @@ public abstract class SeleniumTestNGTests extends SeleniumTests {
   @AfterMethod
   public void after(final ITestResult testResult) {
     final Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
-    after(method, testResult.getStatus() == ITestResult.FAILURE);
+    after(method, testResult.getStatus() == ITestResult.FAILURE, testResult.getThrowable());
   }
 
 }
