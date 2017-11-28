@@ -22,9 +22,10 @@ import java.util.function.Consumer;
 
 /**
  * Compare two {@link BufferedImage images}. Its {@link #compare(BufferedImage, BufferedImage)}
- * method return only <code>0</code> for identity or <code>-1</code> for different images.
+ * method return only <code>0</code> for identity. If the images are different the result represents
+ * the negative count of different pixels.
  * <p>
- * If you provide a difference consumer you will get an difference image at the end of teh
+ * If you provide a difference consumer you will get an difference image at the end of the
  * comparison.
  * </p>
  */
@@ -80,7 +81,9 @@ class ScreenshotComparator implements Comparator<BufferedImage> {
     // both aren't white
     return Color.BLUE.getRGB();
   });
-  private final DifferencePixelStrategy differencePixelStrategy = RGB_STRATEGY;
+  private static final double THRESHOLD = 0.01;
+
+  private final DifferencePixelStrategy differencePixelStrategy = GREYSCALE_STRATEGY;
   private final Consumer<BufferedImage> differenceConsumer;
 
   ScreenshotComparator() {
@@ -101,25 +104,27 @@ class ScreenshotComparator implements Comparator<BufferedImage> {
       differenceImage =
           new BufferedImage(second.getWidth(), second.getHeight(), BufferedImage.TYPE_INT_RGB);
     }
-    int result = 0;
-    outerLoop: for (int x = 1; x < second.getWidth(); x++) {
+    int differentPixels = 0;
+    for (int x = 1; x < second.getWidth(); x++) {
       for (int y = 1; y < second.getHeight(); y++) {
         if (differenceImage != null) {
           final int pixel = differencePixelStrategy.calculate(first, second, x, y);
           differenceImage.setRGB(x, y, pixel);
         }
         if (first.getRGB(x, y) != second.getRGB(x, y)) {
-          result = -1;
-          if (differenceImage == null) {
-            break outerLoop;
-          }
+          differentPixels++;
         }
       }
     }
-    if (differenceImage != null && result != 0) {
-      differenceConsumer.accept(differenceImage);
+    final int pixelCount = second.getWidth() * second.getHeight();
+    final float differentPixelRatio = ((float) differentPixels) / pixelCount;
+    if (differentPixelRatio > THRESHOLD) {
+      if (differenceImage != null) {
+        differenceConsumer.accept(differenceImage);
+      }
+      return -differentPixels;
     }
-    return result;
+    return 0;
   }
 
   @FunctionalInterface
