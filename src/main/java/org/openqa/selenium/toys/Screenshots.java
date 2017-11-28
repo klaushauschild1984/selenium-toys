@@ -37,9 +37,11 @@ import com.google.common.io.Files;
 class Screenshots {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Screenshots.class);
+  private static final String FILE_FORMAT = "png";
 
   private final WebDriver webDriver;
   private final File baseDirectory;
+  private final boolean compareToExistingScreenshots;
   private final Map<String, AtomicInteger> indices = Maps.newHashMap();
 
   public Screenshots(final WebDriver webDriver, final TakeScreenshots takeScreenshots,
@@ -47,17 +49,22 @@ class Screenshots {
     this.webDriver = webDriver;
     if (takeScreenshots.baseDirectory().isEmpty()) {
       final File tempDirectory = Files.createTempDir();
-      baseDirectory = new File(tempDirectory, clazz.getName());
+      baseDirectory = new File(tempDirectory, getClassDirectory(clazz));
     } else {
-      baseDirectory = new File(new File(takeScreenshots.baseDirectory()), clazz.getName());
+      baseDirectory = new File(new File(takeScreenshots.baseDirectory()), getClassDirectory(clazz));
     }
     baseDirectory.mkdirs();
     LOGGER.debug("Take screenshots for {}. Store in {}", clazz.getName(), baseDirectory);
+    compareToExistingScreenshots = takeScreenshots.compareToExistingScreenshots();
+  }
+
+  private String getClassDirectory(final Class<? extends SeleniumTests> clazz) {
+    return clazz.getName().replace(".", File.separator);
   }
 
   void start(final String methodName) {
     indices.put(methodName, new AtomicInteger());
-    screenshot(methodName, "start");
+    screenshot(methodName, null);
   }
 
   void failure(final String methodName) {
@@ -65,18 +72,59 @@ class Screenshots {
   }
 
   void screenshot(final String methodName, final String label) {
-    final File methodDirectory = new File(baseDirectory, methodName);
-    methodDirectory.mkdir();
+    final File methodDirectory = getMethodDirectory(methodName);
     final BufferedImage screenshot = takeScreenshot();
+    final int index = indices.get(methodName).getAndIncrement();
+    final File screenshotFile = getScreenshotFile(index, methodDirectory, label);
+    if (screenshotFile.exists() && compareToExistingScreenshots) {
+      final BufferedImage existingScreenshot = readScreenshotFromFile(screenshotFile);
+      final File differenceImageFile = getScreenshotFile(index, methodDirectory, "diff");
+      if (new ScreenshotComparator(differenceImage -> {
+        writeScreenshotToFile(screenshot, getScreenshotFile(index, methodDirectory, "new"));
+        writeScreenshotToFile(differenceImage, differenceImageFile);
+      }).compare(existingScreenshot, screenshot) != 0) {
+
+        throw new ScreenshotAssertionError(String.format(
+            "There are image differences. See %s for further details.", differenceImageFile));
+      }
+    } else {
+      writeScreenshotToFile(screenshot, screenshotFile);
+    }
+  }
+
+  private BufferedImage readScreenshotFromFile(final File screenshotFile) {
     try {
-      final int index = indices.get(methodName).getAndIncrement();
-      final File screenshotFile = new File(methodDirectory, String.format("%s%s.png",
-          StringUtils.leftPad("" + index, 3, "0"), label != null ? "-" + label : ""));
-      LOGGER.debug("Take screenshot {}", screenshotFile);
-      ImageIO.write(screenshot, "png", screenshotFile);
+      return ImageIO.read(screenshotFile);
     } catch (final IOException exception) {
       throw new RuntimeException(exception);
     }
+  }
+
+  private void writeScreenshotToFile(final BufferedImage screenshot, final File screenshotFile) {
+    try {
+      LOGGER.debug("Take screenshot {}", screenshotFile);
+      ImageIO.write(screenshot, FILE_FORMAT, screenshotFile);
+    } catch (final IOException exception) {
+      throw new RuntimeException(exception);
+    }
+  }
+
+  private File getMethodDirectory(final String methodName) {
+    final File methodDirectory = new File(baseDirectory, methodName);
+    methodDirectory.mkdir();
+    return methodDirectory;
+  }
+
+  private File getScreenshotFile(final int index, final File methodDirectory, final String label) {
+    final StringBuilder builder = new StringBuilder();
+    builder.append(StringUtils.leftPad("" + index, 3, "0"));
+    if (label != null) {
+      builder.append("-");
+      builder.append(label);
+    }
+    builder.append(".");
+    builder.append(FILE_FORMAT);
+    return new File(methodDirectory, builder.toString());
   }
 
   private BufferedImage takeScreenshot() {
@@ -90,6 +138,14 @@ class Screenshots {
     } catch (final IOException exception) {
       throw new RuntimeException(exception);
     }
+  }
+
+  class ScreenshotAssertionError extends AssertionError {
+
+    public ScreenshotAssertionError(final Object detailMessage) {
+      super(detailMessage);
+    }
+
   }
 
 }
