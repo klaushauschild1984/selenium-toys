@@ -28,4 +28,6 @@ public @interface TakeScreenshots {
 
   String baseDirectory() default "";
 
+  boolean compareToExistingScreenshots() default false;
+
 }
