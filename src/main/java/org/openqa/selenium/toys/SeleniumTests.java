@@ -16,7 +16,12 @@
 package org.openqa.selenium.toys;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -45,6 +50,7 @@ abstract class SeleniumTests {
   protected void before(final Method method) {
     // create the web driver
     final Class<?> testClass = this.getClass();
+    checkUniqueMethodNames(testClass);
     webDriver = webdriverFactory.create(testClass);
 
     // inject the entry point
@@ -115,6 +121,17 @@ abstract class SeleniumTests {
 
   private String getInvokingMethodName() {
     return Thread.currentThread().getStackTrace()[3].getMethodName();
+  }
+
+  private void checkUniqueMethodNames(final Class<?> testClass) {
+    final List<String> methodNameList = Arrays.stream(testClass.getDeclaredMethods()) //
+        .map(Method::getName) //
+        .collect(Collectors.toList());
+    final Set<String> methodNameSet = new HashSet<>(methodNameList);
+    if (methodNameList.size() != methodNameSet.size()) {
+      throw new IllegalStateException(String
+          .format("There are not unique method names within test class %s", testClass.getName()));
+    }
   }
 
   private void waitForDocumentReady() {
