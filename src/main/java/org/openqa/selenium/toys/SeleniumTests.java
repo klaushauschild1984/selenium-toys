@@ -65,7 +65,12 @@ abstract class SeleniumTests {
     Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, TakeScreenshots.class)) //
         .ifPresent(takeScreenshots -> {
           screenshots = new Screenshots(webDriver, takeScreenshots, getClass());
-          screenshots.start(method.getName());
+          try {
+            screenshots.start(method.getName());
+          } catch (final AssertionError assertionError) {
+            after(method, true, assertionError);
+            throw assertionError;
+          }
         });
   }
 
@@ -73,9 +78,9 @@ abstract class SeleniumTests {
    * @deprecated do not invoke this directly
    */
   @Deprecated
-  public void after(final Method method, final boolean hasFailure) {
+  public void after(final Method method, final boolean hasFailure, final Throwable cause) {
     if (screenshots != null) {
-      if (hasFailure) {
+      if (hasFailure && !(cause instanceof Screenshots.ScreenshotAssertionError)) {
         screenshots.failure(method.getName());
       }
     }
