@@ -19,12 +19,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.toys.Webdriver;
 import org.openqa.selenium.toys.factory.chrome.ChromeWebdriverFactory;
 import org.openqa.selenium.toys.factory.phantomjs.PhantomJSWebdriverFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 
 /**
  * Implementation of {@link WebdriverFactory} that delegates to the concrete {@link WebdriverFactory
@@ -32,11 +33,40 @@ import com.google.common.collect.ImmutableMap;
  */
 public class DelegatingWebdriverFactory extends AbstractWebdriverFactory {
 
-  private static final Map<String, WebdriverFactory> WEB_DRIVER_FACTORIES =
-      ImmutableMap.<String, WebdriverFactory>builder() //
-          .put(BrowserType.CHROME, new ChromeWebdriverFactory()) //
-          .put(BrowserType.PHANTOMJS, new PhantomJSWebdriverFactory()) //
-          .build();
+  private static final Logger LOGGER = LoggerFactory.getLogger(DelegatingWebdriverFactory.class);
+
+  private static final Map<String, WebdriverFactory> WEBDRIVER_FACTORIES = Maps.newHashMap();
+
+  static {
+    register(new ChromeWebdriverFactory());
+    register(new PhantomJSWebdriverFactory());
+  }
+
+  public DelegatingWebdriverFactory() {
+    super(null);
+  }
+
+  /**
+   * Registers a new {@link WebdriverFactory} for its {@link WebdriverFactory#supportedBrowserType()
+   * supported browser type}. If a factory is already registered for the browser type the old one
+   * will be overridden.
+   * <p>
+   * All factories included in this binary are already registered. If you register a custom factory
+   * YOU have to manage that {@link #register(WebdriverFactory)} is invoked before the actual tests.
+   * </p>
+   * 
+   * @param webdriverFactory the webdriver factory to register
+   */
+  public static void register(final WebdriverFactory webdriverFactory) {
+    final String browserType = webdriverFactory.supportedBrowserType();
+    Optional.ofNullable(WEBDRIVER_FACTORIES.get(browserType)) //
+        .ifPresent(registeredWebdriverFactory -> {
+          LOGGER.warn("Override already registered factory {} for browser type [{}].",
+              registeredWebdriverFactory.getClass(), browserType);
+        });
+    LOGGER.debug("Register {} for browser type [{}].", webdriverFactory.getClass(), browserType);
+    WEBDRIVER_FACTORIES.put(browserType, webdriverFactory);
+  }
 
   @Override
   protected WebDriver create(final Class<?> testClass, final Webdriver webdriver,
@@ -47,7 +77,7 @@ public class DelegatingWebdriverFactory extends AbstractWebdriverFactory {
 
   private WebdriverFactory getWebDriverFactory(final Webdriver webdriver) {
     final String webDriverName = webdriver.value();
-    return Optional.ofNullable(WEB_DRIVER_FACTORIES.get(webDriverName)) //
+    return Optional.ofNullable(WEBDRIVER_FACTORIES.get(webDriverName)) //
         .orElseThrow(
             () -> new AssertionError(String.format("Unknown web driver %s.", webDriverName)));
   }

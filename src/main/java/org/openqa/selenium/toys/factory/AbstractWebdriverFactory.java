@@ -30,6 +30,12 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 public abstract class AbstractWebdriverFactory implements WebdriverFactory {
 
+  private final String supportedBrowserType;
+
+  protected AbstractWebdriverFactory(final String supportedBrowserType) {
+    this.supportedBrowserType = supportedBrowserType;
+  }
+
   @Override
   public WebDriver create(final Class<?> testClass) {
     final Webdriver webdriver = getWebDriverAnnotation(testClass);
@@ -59,6 +65,11 @@ public abstract class AbstractWebdriverFactory implements WebdriverFactory {
   private Map<String, String> toMap(final Option[] options) {
     return Arrays.stream(options) //
         .collect(Collectors.toMap(Option::key, Option::value));
+  }
+
+  @Override
+  public String supportedBrowserType() {
+    return supportedBrowserType;
   }
 
 }

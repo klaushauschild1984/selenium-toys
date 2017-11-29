@@ -28,6 +28,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.toys.Webdriver;
 import org.openqa.selenium.toys.factory.AbstractWebdriverFactory;
 import org.openqa.selenium.toys.factory.DownloadUtils;
@@ -53,6 +54,10 @@ public class ChromeWebdriverFactory extends AbstractWebdriverFactory {
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
   private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
   private static boolean initialized;
+
+  public ChromeWebdriverFactory() {
+    super(BrowserType.CHROME);
+  }
 
   private static void initialize(final String workDirectory, final String expectedVersion) {
     if (initialized) {

@@ -30,4 +30,6 @@ public interface WebdriverFactory {
    */
   WebDriver create(Class<?> testClass);
 
+  String supportedBrowserType();
+
 }

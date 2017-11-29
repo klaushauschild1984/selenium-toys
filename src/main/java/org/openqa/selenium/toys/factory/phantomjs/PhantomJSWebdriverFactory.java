@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
+import org.openqa.selenium.remote.BrowserType;
 import org.openqa.selenium.toys.Webdriver;
 import org.openqa.selenium.toys.factory.AbstractWebdriverFactory;
 import org.openqa.selenium.toys.factory.DownloadUtils;
@@ -27,6 +28,10 @@ import org.openqa.selenium.toys.factory.DownloadUtils;
 public class PhantomJSWebdriverFactory extends AbstractWebdriverFactory {
 
   private static boolean initialized = false;
+
+  public PhantomJSWebdriverFactory() {
+    super(BrowserType.PHANTOMJS);
+  }
 
   private static void initialize() {
     if (initialized) {
