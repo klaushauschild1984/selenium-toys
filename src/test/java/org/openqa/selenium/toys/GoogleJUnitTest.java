@@ -23,8 +23,8 @@ import org.junit.Test;
 import org.openqa.selenium.By;
 
 @Webdriver(value = CHROME, options = { //
-    WORK_DIRECTORY, "target", //
-    IMPLICITLY_WAIT, "500", //
+    @Option(key = WORK_DIRECTORY, value = "target"), //
+    @Option(key = IMPLICITLY_WAIT, value = "500"), //
 })
 @EntryPoint("http://www.google.com")
 public class GoogleJUnitTest extends SeleniumJUnit4Tests {

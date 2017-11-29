@@ -33,7 +33,7 @@ import org.openqa.selenium.remote.BrowserType;
 @Target(ElementType.TYPE)
 public @interface Webdriver {
 
-  public static final String IMPLICITLY_WAIT = "implicitlyWait";
+  String IMPLICITLY_WAIT = "implicitlyWait";
 
   /**
    * Valid values are the constants defined in {@link BrowserType}.
@@ -42,6 +42,6 @@ public @interface Webdriver {
    */
   String value();
 
-  String[] options() default {};
+  Option[] options() default {};
 
 }

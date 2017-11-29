@@ -30,4 +30,6 @@ public @interface TakeScreenshots {
 
   boolean compareToExistingScreenshots() default false;
 
+  Option[] compareOptions() default {};
+
 }

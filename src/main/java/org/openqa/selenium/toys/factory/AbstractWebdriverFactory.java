@@ -17,15 +17,16 @@ package org.openqa.selenium.toys.factory;
 
 import static org.openqa.selenium.toys.Webdriver.IMPLICITLY_WAIT;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.toys.Option;
 import org.openqa.selenium.toys.Webdriver;
 import org.springframework.core.annotation.AnnotationUtils;
-
-import com.google.common.collect.Maps;
 
 public abstract class AbstractWebdriverFactory implements WebdriverFactory {
 
@@ -55,19 +56,9 @@ public abstract class AbstractWebdriverFactory implements WebdriverFactory {
             testClass.getName(), Webdriver.class.getName())));
   }
 
-  private Map<String, String> toMap(final String[] keyValues) {
-    final Map<String, String> map = Maps.newHashMap();
-    if (keyValues != null) {
-      for (int i = 0; i < keyValues.length; i++) {
-        final String key = keyValues[i];
-        String value = null;
-        if (i + 1 < keyValues.length) {
-          value = keyValues[i + 1];
-        }
-        map.put(key, value);
-      }
-    }
-    return map;
+  private Map<String, String> toMap(final Option[] options) {
+    return Arrays.stream(options) //
+        .collect(Collectors.toMap(Option::key, Option::value));
   }
 
 }

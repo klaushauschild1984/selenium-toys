@@ -22,7 +22,7 @@ import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
 @Webdriver(value = CHROME, options = { //
-    WORK_DIRECTORY, "target", //
+    @Option(key = WORK_DIRECTORY, value = "target"), //
 })
 @EntryPoint("http://www.google.com")
 @TakeScreenshots(baseDirectory = "target/screenshots", compareToExistingScreenshots = true)
