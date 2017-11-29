@@ -16,8 +16,10 @@
 package org.openqa.selenium.toys;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -26,15 +28,13 @@ import org.testng.annotations.Test;
 
 public class ScreenshotComparatorTest {
 
-  public static final File FIRST =
-      new File("src\\test\\resources\\org\\openqa\\selenium\\toys\\000.png");
-  public static final File SECOND =
-      new File("src\\test\\resources\\org\\openqa\\selenium\\toys\\001.png");
+  public static final String FIRST = "000.png";
+  public static final String SECOND = "001.png";
 
   @Test
   public void compareDifferentTest() throws Exception {
-    final BufferedImage first = ImageIO.read(FIRST);
-    final BufferedImage second = ImageIO.read(SECOND);
+    final BufferedImage first = ImageIO.read(get(FIRST));
+    final BufferedImage second = ImageIO.read(get(SECOND));
 
     Assert.assertTrue(new ScreenshotComparator(image -> {
       try {
@@ -47,12 +47,16 @@ public class ScreenshotComparatorTest {
 
   @Test
   public void compareIdenticalTest() throws Exception {
-    final BufferedImage first = ImageIO.read(FIRST);
-    final BufferedImage second = ImageIO.read(FIRST);
+    final BufferedImage first = ImageIO.read(get(FIRST));
+    final BufferedImage second = ImageIO.read(get(FIRST));
 
     Assert.assertTrue(new ScreenshotComparator(image -> {
       Assert.fail();
     }).compare(first, second) == 0);
+  }
+
+  private InputStream get(final String name) {
+    return new BufferedInputStream(getClass().getResourceAsStream(name));
   }
 
 }
