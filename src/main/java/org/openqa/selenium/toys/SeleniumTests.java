@@ -33,24 +33,16 @@ import org.openqa.selenium.toys.factory.DelegatingWebdriverFactory;
 import org.openqa.selenium.toys.factory.WebdriverFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
-/**
- * @deprecated do not extends this class directly.
- */
-@Deprecated
-abstract class SeleniumTests {
+class SeleniumTests implements SeleniumApi {
 
-  private WebdriverFactory webdriverFactory = new DelegatingWebdriverFactory();
-  private WebDriver webDriver;
+  private final WebdriverFactory webdriverFactory = new DelegatingWebdriverFactory();
+  private final WebDriver webDriver;
   private Screenshots screenshots;
 
-  /**
-   * @deprecated do not invoke this directly
-   */
-  @Deprecated
-  protected void before(final Method method) {
-    // create the web driver
-    final Class<?> testClass = this.getClass();
+  SeleniumTests(final Class<?> testClass) {
     checkUniqueMethodNames(testClass);
+
+    // create the web driver
     webDriver = webdriverFactory.create(testClass);
 
     // inject the entry point
@@ -61,23 +53,24 @@ abstract class SeleniumTests {
                 testClass.getName(), EntryPoint.class.getName())));
     webDriver.get(entryPoint.value());
 
-    // take screenshots
+    // setup screenshots
     Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, TakeScreenshots.class)) //
         .ifPresent(takeScreenshots -> {
           screenshots = new Screenshots(webDriver, takeScreenshots, getClass());
-          try {
-            screenshots.start(method.getName());
-          } catch (final AssertionError assertionError) {
-            after(method, true, assertionError);
-            throw assertionError;
-          }
         });
   }
 
-  /**
-   * @deprecated do not invoke this directly
-   */
-  @Deprecated
+  protected void before(final Method method) {
+    if (screenshots != null) {
+      try {
+        screenshots.start(method.getName());
+      } catch (final AssertionError assertionError) {
+        after(method, true, assertionError);
+        throw assertionError;
+      }
+    } ;
+  }
+
   public void after(final Method method, final boolean hasFailure, final Throwable cause) {
     if (screenshots != null) {
       if (hasFailure && !(cause instanceof Screenshots.ScreenshotAssertionError)) {
@@ -88,26 +81,26 @@ abstract class SeleniumTests {
     webDriver.quit();
   }
 
-  /**
-   * @deprecated Don't use {@link WebDriver} directly. It' at your own risk.
-   */
-  @Deprecated
-  protected WebDriver getWebDriver() {
+  @Override
+  public WebDriver getWebDriver() {
     return webDriver;
   }
 
-  protected Type type(final String text) {
+  @Override
+  public Type type(final String text) {
     waitForDocumentReady();
     final String methodName = getInvokingMethodName();
     return new Type(webDriver, text, getScreenshotTaker(methodName));
   }
 
-  protected Expect expect(final By by) {
+  @Override
+  public Expect expect(final By by) {
     waitForDocumentReady();
     return new Expect(webDriver, by);
   }
 
-  protected void click(final By on) {
+  @Override
+  public void click(final By on) {
     waitForDocumentReady();
     final WebElement element = webDriver.findElement(on);
     element.click();

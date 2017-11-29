@@ -17,21 +17,46 @@ package org.openqa.selenium.toys;
 
 import java.lang.reflect.Method;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-public abstract class SeleniumTestNGTests extends SeleniumTests {
+public abstract class SeleniumTestNGTests implements SeleniumApi {
+
+  private final SeleniumTests seleniumTests = new SeleniumTests(getClass());
 
   @BeforeMethod
   public void before(final Method method) {
-    super.before(method);
+    seleniumTests.before(method);
+  }
+
+  @Override
+  public WebDriver getWebDriver() {
+    return seleniumTests.getWebDriver();
+  }
+
+  @Override
+  public Type type(final String text) {
+    return seleniumTests.type(text);
+  }
+
+  @Override
+  public Expect expect(final By by) {
+    return seleniumTests.expect(by);
+  }
+
+  @Override
+  public void click(final By on) {
+    seleniumTests.click(on);
   }
 
   @AfterMethod
   public void after(final ITestResult testResult) {
     final Method method = testResult.getMethod().getConstructorOrMethod().getMethod();
-    after(method, testResult.getStatus() == ITestResult.FAILURE, testResult.getThrowable());
+    seleniumTests.after(method, testResult.getStatus() == ITestResult.FAILURE,
+        testResult.getThrowable());
   }
 
 }
