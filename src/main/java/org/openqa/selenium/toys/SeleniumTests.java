@@ -37,14 +37,17 @@ import org.springframework.core.annotation.AnnotationUtils;
 class SeleniumTests implements SeleniumApi {
 
   private final Class<?> testClass;
-  private final WebdriverFactory webdriverFactory = new DelegatingWebdriverFactory();
-  private final WebDriver webDriver;
+
+  private WebdriverFactory webdriverFactory = new DelegatingWebdriverFactory();
+  private WebDriver webDriver;
   private Screenshots screenshots;
 
   SeleniumTests(final Class<?> clazz) {
     this.testClass = clazz;
     checkUniqueMethodNames(testClass);
+  }
 
+  protected void before(final Method method) {
     // create the web driver
     webDriver = webdriverFactory.create(testClass);
 
@@ -60,18 +63,13 @@ class SeleniumTests implements SeleniumApi {
     Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, TakeScreenshots.class)) //
         .ifPresent(takeScreenshots -> {
           screenshots = new Screenshots(webDriver, takeScreenshots, getClass());
+          try {
+            screenshots.start(method.getName());
+          } catch (final AssertionError assertionError) {
+            after(method, true, assertionError);
+            throw assertionError;
+          }
         });
-  }
-
-  protected void before(final Method method) {
-    if (screenshots != null) {
-      try {
-        screenshots.start(method.getName());
-      } catch (final AssertionError assertionError) {
-        after(method, true, assertionError);
-        throw assertionError;
-      }
-    } ;
   }
 
   public void after(final Method method, final boolean hasFailure, final Throwable cause) {
@@ -108,6 +106,12 @@ class SeleniumTests implements SeleniumApi {
     final WebElement element = webDriver.findElement(on);
     element.click();
     getScreenshotTaker(getInvokingMethodName()).run();
+  }
+
+  @Override
+  public <T extends SeleniumModule> T use(final T seleniumModule) {
+    seleniumModule.setSeleniumTests(this);
+    return seleniumModule;
   }
 
   private Runnable getScreenshotTaker(final String methodName) {

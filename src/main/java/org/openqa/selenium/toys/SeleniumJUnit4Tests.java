@@ -30,39 +30,20 @@ import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
 
-public abstract class SeleniumJUnit4Tests implements SeleniumApi {
+public abstract class SeleniumJUnit4Tests extends SeleniumModule {
 
   @Rule
   public final JUnitBeforeAndAfterHandler junitBeforeAndAfterHandler =
       new JUnitBeforeAndAfterHandler(this);
-  private final SeleniumTests seleniumTests = new SeleniumTests(getClass());
+
+  public SeleniumJUnit4Tests() {
+    setSeleniumTests(new SeleniumTests(getClass()));
+  }
 
   @JUnitBefore
   public void before(final Method method) {
     seleniumTests.before(method);
-  }
-
-  @Override
-  public WebDriver getWebDriver() {
-    return seleniumTests.getWebDriver();
-  }
-
-  @Override
-  public Type type(final String text) {
-    return seleniumTests.type(text);
-  }
-
-  @Override
-  public Expect expect(final By by) {
-    return seleniumTests.expect(by);
-  }
-
-  @Override
-  public void click(final By on) {
-    seleniumTests.click(on);
   }
 
   @JUnitAfter

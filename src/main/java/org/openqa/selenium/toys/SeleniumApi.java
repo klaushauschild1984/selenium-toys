@@ -18,4 +18,6 @@ public interface SeleniumApi {
 
   void click(final By on);
 
+  <T extends SeleniumModule> T use(final T seleniumModule);
+
 }
