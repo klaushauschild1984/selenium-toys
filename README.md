@@ -70,20 +70,20 @@ To use Selenium Toys just add the following repository and dependency to you `po
 There is no hard dependency to only one test backend like [TestNG](http://testng.org) or [JUnit](http://junit.org).
 Extend and use `SeleniumTestNGTests` if you prefer TestNG. Extend and use `SeleniumJUnit4Tests` if you are a JUnit4 guy.
 
-## Screenshot compare
+## Take screenshots
 
 Writing maintainable UI tests is one big part. Defining expectations is the other big one. Selenium Toy provide through
 Selenium functionality for DOM based text expectations. If you will go further and expect layout and UI behavior it is
 nearly impossible to formulate those expectations.
 
-For this scenarios there is the screenshot compare functionality. After every step a screenshot will be taken. This
-screenshots will be compared to corresponding screenshot from previous test runs. If there is a difference between two
-screenshots the test case will fail.
+In the first place add the `@TakeScreenshots` annotation to your test and for every test step a screenshot will be
+taken. If an assertion fails the causing situation is also documented via an additional screenshot named
+`XXX-failure.png`.
 
-The intended way is that you will make an initial run and verify the taken screenshots by human inspection. The set of
-screenshot has to be stored on a shared place where later test runs can access and compare them.
-
-**This feature is still WORK IN PROGRESS**
+In addition you can enable the comparison to already existing screenshots. If so at every test step a screenshot is
+taken and compared to an already existing screenshot. The comparison is calculated by counting the different pixel
+within the two images. If the threshold is surpassed the test will fail. Two addition files `XXX-new.png` and
+`XXX-diff.png` will be generated to help you figuring out the problem.
 
 ## Supported WebDrivers
 
@@ -113,8 +113,61 @@ its key value pairs lined up in one row.
 
 * basic auto download support for fixed version
 
-## Known limitations
+### Custom webdriver factory
 
-* Currently there is no elegant way the modularize tests build with Selenium Toys. I work hard on that!
-* A WebdriverFactory has to be explicitly registered at `DelegatingWebdriverFactory`. That makes it hard to write an
-own factory.
+You can implement you own `WebdriverFactory` to provide support an not included web driver. After the implementation the
+class has to be registered at `DelegatingWebdriverFactory`. Every web driver factory is determined by its supported
+browser type. Only one per type is allowed. But there is the possibility to override already registered factories. The
+last registered factory will be used. At all cost you have to manage the the factory registration happens **before**
+any test will be executed. Otherwise the test setup will fail.
+
+## Modularize tests
+
+There is a concept of modularization. Maybe you working on a test suite for a rich web application. It is possible that
+in a lot of tests will be al lo of similar test steps. To prevent code duplications and help maintain your tests use
+`SeleniumModule`. By extending this class you are provided with the same api for test steps. The example below
+modularize the usage example. Best practice is that a module has one method that performs the test steps. Within the
+test you have to use it nd perform its action.
+
+```java
+import static org.openqa.selenium.remote.BrowserType.CHROME;
+
+import org.openqa.selenium.toys.Webdriver;
+import org.openqa.selenium.toys.EntryPoint;
+import org.openqa.selenium.toys.SeleniumTestNGTests;
+import org.openqa.selenium.toys.SeleniumModule;
+import org.openqa.selenium.By;
+import org.testng.annotations.Test;
+
+@Webdriver(value = CHROME)
+@EntryPoint("http://www.google.com")
+public class SeleniumModuleTest extends SeleniumTestNGTests {
+
+  @Test
+  public void calculatorTest() {
+    use(new GoogleSearch()).typeAndSubmit("2+2");
+
+    use(new GooleSearchResult()).expect("4");
+  }
+
+  static class GoogleSearch extends SeleniumModule {
+
+    void typeAndSubmit(final String text) {
+      type(text) //
+          .on(By.id("lst-ib")) //
+          .submit();
+    }
+
+  }
+
+  static class GooleSearchResult extends SeleniumModule {
+
+    void expect(final String text) {
+      expect(By.id("cwtltblr")) //
+          .hasText(text);
+    }
+
+  }
+
+}
+```
