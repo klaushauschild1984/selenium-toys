@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,11 +36,13 @@ import org.springframework.core.annotation.AnnotationUtils;
 
 class SeleniumTests implements SeleniumApi {
 
+  private final Class<?> testClass;
   private final WebdriverFactory webdriverFactory = new DelegatingWebdriverFactory();
   private final WebDriver webDriver;
   private Screenshots screenshots;
 
-  SeleniumTests(final Class<?> testClass) {
+  SeleniumTests(final Class<?> clazz) {
+    this.testClass = clazz;
     checkUniqueMethodNames(testClass);
 
     // create the web driver
@@ -118,7 +121,13 @@ class SeleniumTests implements SeleniumApi {
   }
 
   private String getInvokingMethodName() {
-    return Thread.currentThread().getStackTrace()[3].getMethodName();
+    // filter stack trace by class name
+    final List<StackTraceElement> relevantStackTraceElements = Arrays
+        .stream(Thread.currentThread().getStackTrace()).filter(stackTraceElement -> Objects
+            .equals(stackTraceElement.getClassName(), testClass.getName()))
+        .collect(Collectors.toList());
+    // the last element is the invoking method
+    return relevantStackTraceElements.get(relevantStackTraceElements.size() - 1).getMethodName();
   }
 
   private void checkUniqueMethodNames(final Class<?> testClass) {
