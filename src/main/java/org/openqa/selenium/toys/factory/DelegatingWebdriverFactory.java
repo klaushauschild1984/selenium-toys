@@ -21,6 +21,7 @@ import java.util.Optional;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.toys.Webdriver;
 import org.openqa.selenium.toys.factory.chrome.ChromeWebdriverFactory;
+import org.openqa.selenium.toys.factory.firefox.FirefoxWebdriverFactory;
 import org.openqa.selenium.toys.factory.phantomjs.PhantomJSWebdriverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class DelegatingWebdriverFactory extends AbstractWebdriverFactory {
 
   static {
     register(new ChromeWebdriverFactory());
+    register(new FirefoxWebdriverFactory());
     register(new PhantomJSWebdriverFactory());
   }
 
