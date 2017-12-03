@@ -20,9 +20,9 @@ import org.openqa.selenium.WebDriver;
 
 public abstract class SeleniumModule implements SeleniumApi {
 
-  SeleniumTests seleniumTests;
+  protected SeleniumTests seleniumTests;
 
-  void setSeleniumTests(final SeleniumTests seleniumTests) {
+  protected void setSeleniumTests(final SeleniumTests seleniumTests) {
     this.seleniumTests = seleniumTests;
   }
 

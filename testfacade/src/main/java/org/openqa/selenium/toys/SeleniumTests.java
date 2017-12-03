@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -30,33 +31,39 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.openqa.selenium.toys.factory.DelegatingWebdriverFactory;
-import org.openqa.selenium.toys.factory.WebdriverFactory;
 import org.springframework.core.annotation.AnnotationUtils;
 
-class SeleniumTests implements SeleniumApi {
+public class SeleniumTests implements SeleniumApi {
 
   private final Class<?> testClass;
 
-  private WebdriverFactory webdriverFactory = new DelegatingWebdriverFactory();
   private WebDriver webDriver;
   private Screenshots screenshots;
 
-  SeleniumTests(final Class<?> clazz) {
+  public SeleniumTests(final Class<?> clazz) {
     this.testClass = clazz;
     checkUniqueMethodNames(testClass);
   }
 
-  protected void before(final Method method) {
+  public void before(final Method method) {
     // create the web driver
-    webDriver = webdriverFactory.create(testClass);
+    final RunWithWebDriver runWithWebDriver = Optional
+        .ofNullable(AnnotationUtils.findAnnotation(testClass, RunWithWebDriver.class)) //
+        .orElseThrow(() -> new AssertionError(String.format(
+            "Test class %s is not annotated with %s to specify which web driver should be used for running.",
+            testClass.getName(), RunWithWebDriver.class.getName())));
+    final WebDriverFactory webDriverFactory =
+        WebDriverFactoryRegistry.getWebDriverFactory(runWithWebDriver.value());
+    final Map<String, Object> options = Arrays.stream(runWithWebDriver.options()) //
+        .collect(Collectors.toMap(Option::key, Option::value));
+    webDriver = webDriverFactory.create(options);
 
     // inject the entry point
-    final EntryPoint entryPoint =
-        Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, EntryPoint.class)) //
+    final WebDriverEntryPoint entryPoint =
+        Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, WebDriverEntryPoint.class)) //
             .orElseThrow(() -> new AssertionError(String.format(
                 "Test class %s is not annotated with %s to specify the entry point of the test.",
-                testClass.getName(), EntryPoint.class.getName())));
+                testClass.getName(), WebDriverEntryPoint.class.getName())));
     webDriver.get(entryPoint.value());
 
     // setup screenshots

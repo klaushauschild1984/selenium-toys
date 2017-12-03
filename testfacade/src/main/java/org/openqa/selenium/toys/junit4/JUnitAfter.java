@@ -15,30 +15,13 @@
 
 package org.openqa.selenium.toys.junit4;
 
-import java.lang.reflect.Method;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.junit.Rule;
-import org.openqa.selenium.toys.SeleniumModule;
-import org.openqa.selenium.toys.SeleniumTests;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public abstract class SeleniumJUnit4Tests extends SeleniumModule {
-
-  @Rule
-  public final JUnitBeforeAndAfterHandler junitBeforeAndAfterHandler =
-      new JUnitBeforeAndAfterHandler(this);
-
-  public SeleniumJUnit4Tests() {
-    setSeleniumTests(new SeleniumTests(getClass()));
-  }
-
-  @JUnitBefore
-  public void before(final Method method) {
-    seleniumTests.before(method);
-  }
-
-  @JUnitAfter
-  public void after(final Method method, final boolean success, final Throwable cause) {
-    seleniumTests.after(method, !success, cause);
-  }
-
+@Retention(RUNTIME)
+@Target(METHOD)
+@interface JUnitAfter {
 }

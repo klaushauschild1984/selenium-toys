@@ -17,6 +17,8 @@ package org.openqa.selenium.toys.testng;
 
 import java.lang.reflect.Method;
 
+import org.openqa.selenium.toys.SeleniumModule;
+import org.openqa.selenium.toys.SeleniumTests;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;

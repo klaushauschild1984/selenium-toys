@@ -16,17 +16,18 @@
 package org.openqa.selenium.toys;
 
 import static org.openqa.selenium.remote.BrowserType.CHROME;
-import static org.openqa.selenium.toys.Webdriver.IMPLICITLY_WAIT;
-import static org.openqa.selenium.toys.factory.chrome.ChromeWebdriverFactory.WORK_DIRECTORY;
+import static org.openqa.selenium.toys.AbstractDownloadingWebDriverFactory.WORK_DIRECTORY;
+import static org.openqa.selenium.toys.RunWithWebDriver.IMPLICITLY_WAIT;
 
 import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.toys.junit4.SeleniumJUnit4Tests;
 
-@Webdriver(value = CHROME, options = { //
+@RunWithWebDriver(value = CHROME, options = { //
     @Option(key = WORK_DIRECTORY, value = "target"), //
     @Option(key = IMPLICITLY_WAIT, value = "500"), //
 })
-@EntryPoint("http://www.google.com")
+@WebDriverEntryPoint("http://www.google.com")
 public class GoogleJUnitTest extends SeleniumJUnit4Tests {
 
   @Test

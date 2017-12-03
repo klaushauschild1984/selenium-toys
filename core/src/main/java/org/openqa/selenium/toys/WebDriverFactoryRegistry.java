@@ -53,7 +53,7 @@ public enum WebDriverFactoryRegistry {
     FACTORIES.put(browserType, webDriverFactory);
   }
 
-  public WebDriverFactory getWebDriverFactory(final String browserType) {
+  public static WebDriverFactory getWebDriverFactory(final String browserType) {
     return Optional.ofNullable(FACTORIES.get(browserType)) //
         .orElseThrow(() -> new IllegalArgumentException(
             String.format("Unsupported browser type [%s].", browserType)));

@@ -32,6 +32,13 @@
             <version>${parent.version}</version>
         </dependency>
         <!-- Selenium Toys Core -->
+        <!-- Tools -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>5.0.1.RELEASE</version>
+        </dependency>
+        <!-- Tools -->
         <!-- Test backends -->
         <dependency>
             <groupId>org.testng</groupId>

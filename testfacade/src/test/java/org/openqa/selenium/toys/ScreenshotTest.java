@@ -16,15 +16,16 @@
 package org.openqa.selenium.toys;
 
 import static org.openqa.selenium.remote.BrowserType.CHROME;
-import static org.openqa.selenium.toys.factory.chrome.ChromeWebdriverFactory.WORK_DIRECTORY;
+import static org.openqa.selenium.toys.AbstractDownloadingWebDriverFactory.WORK_DIRECTORY;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.toys.testng.SeleniumTestNGTests;
 import org.testng.annotations.Test;
 
-@Webdriver(value = CHROME, options = { //
+@RunWithWebDriver(value = CHROME, options = { //
     @Option(key = WORK_DIRECTORY, value = "target"), //
 })
-@EntryPoint("http://www.google.com")
+@WebDriverEntryPoint("http://www.google.com")
 @TakeScreenshots(baseDirectory = "target/screenshots", compareToExistingScreenshots = true)
 public class ScreenshotTest extends SeleniumTestNGTests {
 
