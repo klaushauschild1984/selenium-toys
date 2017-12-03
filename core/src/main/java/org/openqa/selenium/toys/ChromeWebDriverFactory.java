@@ -38,7 +38,7 @@ public class ChromeWebDriverFactory extends AbstractDownloadingWebDriverFactory 
   private static final String DOWNLOAD_URL = "http://chromedriver.storage.googleapis.com";
   private static final String LATEST_RELEASE_URL = DOWNLOAD_URL + "/LATEST_RELEASE";
 
-  protected ChromeWebDriverFactory() {
+  public ChromeWebDriverFactory() {
     super( //
         BrowserType.CHROME, //
         (targetDirectory) -> {

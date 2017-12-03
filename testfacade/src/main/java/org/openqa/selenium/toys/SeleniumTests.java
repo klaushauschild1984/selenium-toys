@@ -43,6 +43,9 @@ public class SeleniumTests implements SeleniumApi {
   public SeleniumTests(final Class<?> clazz) {
     this.testClass = clazz;
     checkUniqueMethodNames(testClass);
+
+    // register common web driver factories
+    WebDriverFactoryRegistry.register(new ChromeWebDriverFactory());
   }
 
   public void before(final Method method) {
