@@ -25,11 +25,33 @@
     <!-- The Basics -->
     <artifactId>testfacade</artifactId>
     <dependencies>
+        <!-- Selenium Toys Core -->
         <dependency>
             <groupId>${parent.groupId}</groupId>
             <artifactId>core</artifactId>
             <version>${parent.version}</version>
         </dependency>
+        <!-- Selenium Toys Core -->
+        <!-- Test backends -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.11</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>2.0.2-beta</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Test backends -->
     </dependencies>
     <parent>
         <artifactId>parent</artifactId>

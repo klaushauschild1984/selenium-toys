@@ -13,23 +13,30 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.openqa.selenium.toys.factory;
+package org.openqa.selenium.toys;
 
-import org.openqa.selenium.WebDriver;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-/**
- * A web driver factory creates a web driver and initializes it.
- */
-public interface WebdriverFactory {
+import org.openqa.selenium.remote.BrowserType;
+
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface RunWithWebDriver {
+
+  String IMPLICITLY_WAIT = "implicitlyWait";
 
   /**
-   * Creates the web driver and initializes it.
+   * Valid values are the constants defined in {@link BrowserType}.
    * 
-   * @param testClass the test class
-   * @return the initialized web driver
+   * @return the name of the web driver
    */
-  WebDriver create(Class<?> testClass);
+  String value();
 
-  String supportedBrowserType();
+  Option[] options() default {};
 
 }

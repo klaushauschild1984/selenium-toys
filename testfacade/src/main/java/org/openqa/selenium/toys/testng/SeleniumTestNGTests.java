@@ -13,7 +13,7 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.openqa.selenium.toys;
+package org.openqa.selenium.toys.testng;
 
 import java.lang.reflect.Method;
 

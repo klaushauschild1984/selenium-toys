@@ -8,9 +8,9 @@ This project provides a rich toolbox for easy writing [Selenium](http://www.sele
 ```java
 import static org.openqa.selenium.remote.BrowserType.CHROME;
 
-import org.openqa.selenium.toys.Webdriver;
-import org.openqa.selenium.toys.EntryPoint;
-import org.openqa.selenium.toys.SeleniumTestNGTests;
+import org.openqa.selenium.toys.RunWithWebDriver;
+import org.openqa.selenium.toys.WebDriverEntryPoint;
+import org.openqa.selenium.toys.testng.SeleniumTestNGTests;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
@@ -136,9 +136,9 @@ test you have to use it nd perform its action.
 ```java
 import static org.openqa.selenium.remote.BrowserType.CHROME;
 
-import org.openqa.selenium.toys.Webdriver;
-import org.openqa.selenium.toys.EntryPoint;
-import org.openqa.selenium.toys.SeleniumTestNGTests;
+import org.openqa.selenium.toys.RunWithWebDriver;
+import org.openqa.selenium.toys.WebDriverEntryPoint;
+import org.openqa.selenium.toys.testng.SeleniumTestNGTests;
 import org.openqa.selenium.toys.SeleniumModule;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;

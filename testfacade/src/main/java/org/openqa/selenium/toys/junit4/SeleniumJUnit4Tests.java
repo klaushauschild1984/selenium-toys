@@ -13,7 +13,7 @@
  * not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.openqa.selenium.toys;
+package org.openqa.selenium.toys.junit4;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
+import org.openqa.selenium.toys.SeleniumModule;
 
 public abstract class SeleniumJUnit4Tests extends SeleniumModule {
 
