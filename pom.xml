@@ -48,7 +48,6 @@
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <surefire.version>2.13</surefire.version>
     </properties>
 
     <!-- Build Settings -->
@@ -148,23 +147,6 @@
                         <phase>deploy</phase>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire.version}</version>
-                <inherited>true</inherited>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-junit47</artifactId>
-                        <version>${surefire.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-testng</artifactId>
-                        <version>${surefire.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
