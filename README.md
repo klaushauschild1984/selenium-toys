@@ -58,7 +58,11 @@ To use Selenium Toys just add the following repository and dependency to you `po
     <repository>
       <id>selenium-toys-repo</id>
       <name>Selenium Toys Repository</name>
-      <url>https://github.com/klaushauschild1984/selenium-toys/tree/mvn-repo</url>
+      <url>https://raw.githubusercontent.com/klaushauschild1984/selenium-toys/mvn-repo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>always</updatePolicy>
+      </snapshots>
     </repository>
   </repositories>
 ...
