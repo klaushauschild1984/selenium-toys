@@ -82,8 +82,8 @@ public class ChromeWebDriverFactory extends AbstractDownloadingWebDriverFactory 
                     SystemUtils.OS_VERSION));
           }
           LOGGER.debug("System '{}' detected.", system);
-          final String downloadUrl =
-              DOWNLOAD_URL + String.format("/%s/chromedriver_%s.zip", version, system);
+          final String downloadUrl = DOWNLOAD_URL + String.format("/%s/chromedriver_%s.zip",
+              Optional.ofNullable(version).orElseGet(() -> getString(LATEST_RELEASE_URL)), system);
           LOGGER.debug("Download chromedriver from {}", downloadUrl);
           downloadZipAndExtract(downloadUrl, targetDirectory);
           final File chromeDriverFile = new File(targetDirectory,
