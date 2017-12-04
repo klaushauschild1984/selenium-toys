@@ -20,17 +20,28 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SetupWebDriverExecutable {
+import com.google.common.base.Strings;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(SetupWebDriverExecutable.class);
+public class SystemPropertyWebDriverExecutableSetup {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(SystemPropertyWebDriverExecutableSetup.class);
 
   private final String systemPropertyForExecutable;
   private final File webDriverExecutable;
 
-  public SetupWebDriverExecutable(final String systemPropertyForExecutable,
+  public SystemPropertyWebDriverExecutableSetup(final String systemPropertyForExecutable,
       final File webDriverExecutable) {
     this.systemPropertyForExecutable = systemPropertyForExecutable;
     this.webDriverExecutable = webDriverExecutable;
+  }
+
+  public boolean istSetup() {
+    final String systemPropertyValue = System.getProperty(systemPropertyForExecutable);
+    if (Strings.isNullOrEmpty(systemPropertyValue)) {
+      return false;
+    }
+    return new File(systemPropertyValue).exists();
   }
 
   public void setup() {

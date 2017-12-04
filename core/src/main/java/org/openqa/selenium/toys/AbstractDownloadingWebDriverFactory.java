@@ -119,7 +119,7 @@ public abstract class AbstractDownloadingWebDriverFactory implements WebDriverFa
     });
   }
 
-  protected static void handleHttpStatus(final CloseableHttpResponse response) throws IOException {
+  private static void handleHttpStatus(final CloseableHttpResponse response) throws IOException {
     final StatusLine statusLine = response.getStatusLine();
     if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
       throw new IOException(String.format("Http GET not successful. Status: %s", statusLine));
@@ -137,8 +137,9 @@ public abstract class AbstractDownloadingWebDriverFactory implements WebDriverFa
       final File webDriverExecutable =
           new DownloadWebDriverExecutable(targetDirectory, getWebDriverExecutableFromWorkDirectory,
               getLatestVersion, downloadExpectedVersion).get(expectedVersion, forceUpdate);
+      new SystemPropertyWebDriverExecutableSetup(systemPropertyForExecutable, webDriverExecutable)
+          .setup();
       webDriver = instantiateWebDriver(options);
-      new SetupWebDriverExecutable(systemPropertyForExecutable, webDriverExecutable).setup();
       new WebDriverShutdownHook(webDriver).install();
     }).initialize();
     return webDriver;
