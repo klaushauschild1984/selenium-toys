@@ -48,7 +48,8 @@ public class DownloadWebDriverExecutable {
 
     if (expectedVersion == null && !webDriverExecutable.isPresent()) {
       // no expected version, no local copy -> download latest
-      return downloadExpectedVersion.apply(null, targetDirectory).get();
+      final String latestVersion = getLatestVersion.get();
+      return downloadExpectedVersion.apply(latestVersion, targetDirectory).get();
     }
     if (expectedVersion == null) {
       // no expected version, local copy present
@@ -60,8 +61,8 @@ public class DownloadWebDriverExecutable {
           return webDriverExecutable.get().get();
         } else {
           // local copy's version differs from latest version -> delete old copy and download latest
-          webDriverExecutable.get().get().delete();
-          return downloadExpectedVersion.apply(null, targetDirectory).get();
+          delete(webDriverExecutable.get());
+          return downloadExpectedVersion.apply(latestVersion, targetDirectory).get();
         }
       } else {
         // no update forced -> use local copy
@@ -77,8 +78,15 @@ public class DownloadWebDriverExecutable {
       return webDriverExecutable.get().get();
     } else {
       // local copy's version differs from expected version -> delete old copy and download expected
-      webDriverExecutable.get().get().delete();
+      delete(webDriverExecutable.get());
       return downloadExpectedVersion.apply(expectedVersion, targetDirectory).get();
+    }
+  }
+
+  private void delete(final WebDriverExecutable webDriverExecutable) {
+    if (!webDriverExecutable.get().delete()) {
+      throw new IllegalStateException(String
+          .format("Unable to delete outdated executable version %s", webDriverExecutable.get()));
     }
   }
 
@@ -87,12 +95,12 @@ public class DownloadWebDriverExecutable {
     private final File file;
     private final String version;
 
-    public WebDriverExecutable(final File file, final String version) {
+    WebDriverExecutable(final File file, final String version) {
       this.file = file;
       this.version = version;
     }
 
-    public File get() {
+    File get() {
       return file;
     }
 
