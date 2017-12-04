@@ -128,6 +128,7 @@ public class ChromeWebDriverFactory extends AbstractDownloadingWebDriverFactory 
     final File workDirectory = getWorkDirectory(options);
     final File logFile = new File(workDirectory, "chromedriver.log");
     try {
+      logFile.getParentFile().mkdirs();
       logFile.createNewFile();
     } catch (final IOException exception) {
       throw new RuntimeException(String.format("Unable to create %s", logFile));
