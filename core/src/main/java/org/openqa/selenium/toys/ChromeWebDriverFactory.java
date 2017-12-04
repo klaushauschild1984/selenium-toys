@@ -15,7 +15,12 @@
 
 package org.openqa.selenium.toys;
 
+import static org.openqa.selenium.chrome.ChromeDriverService.CHROME_DRIVER_LOG_PROPERTY;
+import static org.openqa.selenium.chrome.ChromeDriverService.CHROME_DRIVER_SILENT_OUTPUT_PROPERTY;
+import static org.openqa.selenium.chrome.ChromeDriverService.CHROME_DRIVER_VERBOSE_LOG_PROPERTY;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -112,6 +117,26 @@ public class ChromeWebDriverFactory extends AbstractDownloadingWebDriverFactory 
       return exe;
     }
     return "";
+  }
+
+  @Override
+  protected void beforeInitialization(final Map<String, Object> options) {
+    if (!LOGGER.isDebugEnabled()) {
+      System.setProperty(CHROME_DRIVER_SILENT_OUTPUT_PROPERTY, Boolean.TRUE.toString());
+      return;
+    }
+    final File workDirectory = getWorkDirectory(options);
+    final File logFile = new File(workDirectory, "chromedriver.log");
+    try {
+      logFile.createNewFile();
+    } catch (final IOException exception) {
+      throw new RuntimeException(String.format("Unable to create %s", logFile));
+    }
+    logFile.deleteOnExit();
+    System.setProperty(CHROME_DRIVER_LOG_PROPERTY, logFile.getAbsolutePath());
+    if (LOGGER.isTraceEnabled()) {
+      System.setProperty(CHROME_DRIVER_VERBOSE_LOG_PROPERTY, Boolean.TRUE.toString());
+    }
   }
 
   @Override

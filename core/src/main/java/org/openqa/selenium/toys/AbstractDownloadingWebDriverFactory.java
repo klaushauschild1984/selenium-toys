@@ -129,23 +129,38 @@ public abstract class AbstractDownloadingWebDriverFactory implements WebDriverFa
   @Override
   public WebDriver create(final Map<String, Object> options) {
     new Initialization(() -> {
-      final File targetDirectory =
-          new File(((String) Optional.ofNullable(options.get(WORK_DIRECTORY))
-              .orElse(System.getProperty("java.io.tmpdir"))), browserType);
+      beforeInitialization(options);
+
+      final File workDirectory = getWorkDirectory(options);
       final String expectedVersion = (String) options.get(EXPECTED_VERSION);
       final boolean forceUpdate = Boolean.parseBoolean((String) options.get(FORCE_UPDATE));
       final File webDriverExecutable =
-          new DownloadWebDriverExecutable(targetDirectory, getWebDriverExecutableFromWorkDirectory,
+          new DownloadWebDriverExecutable(workDirectory, getWebDriverExecutableFromWorkDirectory,
               getLatestVersion, downloadExpectedVersion).get(expectedVersion, forceUpdate);
       new SystemPropertyWebDriverExecutableSetup(systemPropertyForExecutable, webDriverExecutable)
           .setup();
       webDriver = instantiateWebDriver(options);
       new WebDriverShutdownHook(webDriver).install();
+
+      afterInitialization(options);
     }).initialize();
     return webDriver;
   }
 
+  protected File getWorkDirectory(final Map<String, Object> options) {
+    return new File(((String) Optional.ofNullable(options.get(WORK_DIRECTORY))
+        .orElse(System.getProperty("java.io.tmpdir"))), browserType);
+  }
+
+  protected void beforeInitialization(final Map<String, Object> options) {
+    // override this to perform additional stuff before initialization
+  }
+
   protected abstract WebDriver instantiateWebDriver(final Map<String, Object> options);
+
+  protected void afterInitialization(final Map<String, Object> options) {
+    // override this to perform additional stuff after initialization
+  }
 
   @Override
   public String createdBrowserType() {
