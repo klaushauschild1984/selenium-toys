@@ -1,9 +1,8 @@
 # Selenium Toys [![Build Status](https://travis-ci.org/klaushauschild1984/selenium-toys.svg?branch=master)](https://travis-ci.org/klaushauschild1984/selenium-toys) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=org.seleniumhq.selenium-toys%3Aselenium-toys)](https://sonarcloud.io/dashboard?id=org.seleniumhq.selenium-toys%3Aselenium-toys)
 
-
 This project provides a rich toolbox for easy writing [Selenium](http://www.seleniumhq.org/) test cases.
 
-## Usage Example
+## Child's play
 
 ```java
 import static org.openqa.selenium.remote.BrowserType.CHROME;
@@ -14,8 +13,8 @@ import org.openqa.selenium.toys.testng.SeleniumTestNGTests;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
-@Webdriver(value = CHROME)
-@EntryPoint("http://www.google.com")
+@RunWithWebDriver(value = CHROME)
+@WebDriverEntryPoint("http://www.google.com")
 public class GoogleTest extends SeleniumTestNGTests {
 
   @Test
@@ -49,8 +48,8 @@ To use Selenium Toys just add the following repository and dependency to you `po
   <dependencies>
     <dependency>
       <groupId>org.seleniumhq.selenium-toys</groupId>
-      <artifactId>selenium-toys</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <artifactId>testfacade</artifactId>
+      <version>2.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
   ...
@@ -80,7 +79,7 @@ Writing maintainable UI tests is one big part. Defining expectations is the othe
 Selenium functionality for DOM based text expectations. If you will go further and expect layout and UI behavior it is
 nearly impossible to formulate those expectations.
 
-In the first place add the `@TakeScreenshots` annotation to your test and for every test step a screenshot will be
+In the first place just add the `@TakeScreenshots` annotation to your test and for every test step a screenshot will be
 taken. If an assertion fails the causing situation is also documented via an additional screenshot named
 `XXX-failure.png`.
 
@@ -113,11 +112,7 @@ its key value pairs lined up in one row.
   Via this option the working directory for the chrome driver is specified. There will be the executable located and if
   not present then downloaded. Leave it unspecified to use the systems temporary directory.
 
-### [PhantomJS](https://github.com/detro/ghostdriver)
-
-* basic auto download support for fixed version
-
-### Custom webdriver factory
+### Custom web driver factory
 
 You can implement you own `WebdriverFactory` to provide support an not included web driver. After the implementation the
 class has to be registered at `DelegatingWebdriverFactory`. Every web driver factory is determined by its supported
@@ -143,8 +138,8 @@ import org.openqa.selenium.toys.SeleniumModule;
 import org.openqa.selenium.By;
 import org.testng.annotations.Test;
 
-@Webdriver(value = CHROME)
-@EntryPoint("http://www.google.com")
+@RunWithWebDriver(value = CHROME)
+@WebDriverEntryPoint("http://www.google.com")
 public class SeleniumModuleTest extends SeleniumTestNGTests {
 
   @Test
