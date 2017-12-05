@@ -119,9 +119,7 @@
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.8.1</version>
                 <configuration>
-                    <altDeploymentRepository>
-                        internal.repo::default::file://${us‌​er.dir}/target/mvn-r‌​epo
-                    </altDeploymentRepository>
+                    <altDeploymentRepository>internal.repo::default::file://${reactor.root}/mvn-repo</altDeploymentRepository>
                 </configuration>
             </plugin>
             <plugin>
@@ -131,7 +129,7 @@
                 <configuration>
                     <message>Maven artifacts for ${project.version}</message>
                     <noJekyll>true</noJekyll>
-                    <outputDirectory>${user.dir}/target/mvn-repo</outputDirectory>
+                    <outputDirectory>${reactor.root}/mvn-repo</outputDirectory>
                     <branch>refs/heads/mvn-repo</branch>
                     <includes>
                         <include>**/*</include>
@@ -146,6 +144,27 @@
                             <goal>site</goal>
                         </goals>
                         <phase>deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.commonjava.maven.plugins</groupId>
+                <artifactId>directory-maven-plugin</artifactId>
+                <version>0.1</version>
+                <executions>
+                    <execution>
+                        <id>directories</id>
+                        <goals>
+                            <goal>directory-of</goal>
+                        </goals>
+                        <phase>initialize</phase>
+                        <configuration>
+                            <property>reactor.root</property>
+                            <project>
+                                <groupId>org.seleniumhq.selenium-toys</groupId>
+                                <artifactId>parent</artifactId>
+                            </project>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -198,7 +217,7 @@
         <repository>
             <id>internal.repo</id>
             <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
+            <url>file://${reactor.root}/mvn-repo</url>
         </repository>
     </distributionManagement>
 

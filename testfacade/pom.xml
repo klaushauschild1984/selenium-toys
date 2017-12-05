@@ -27,9 +27,9 @@
     <dependencies>
         <!-- Selenium Toys Core -->
         <dependency>
-            <groupId>${parent.groupId}</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>core</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <!-- Selenium Toys Core -->
         <!-- Tools -->
