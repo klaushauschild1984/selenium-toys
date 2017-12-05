@@ -1,8 +1,19 @@
-# Selenium Toys [![Build Status](https://travis-ci.org/klaushauschild1984/selenium-toys.svg?branch=master)](https://travis-ci.org/klaushauschild1984/selenium-toys) [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=org.seleniumhq.selenium-toys%3Aselenium-toys)](https://sonarcloud.io/dashboard?id=org.seleniumhq.selenium-toys%3Aselenium-toys)
+# Selenium Toys [![Build Status](https://travis-ci.org/klaushauschild1984/selenium-toys.svg?branch=master)](https://travis-ci.org/klaushauschild1984/selenium-toys)
 
 This project provides a rich toolbox for easy writing [Selenium](http://www.seleniumhq.org/) test cases.
 
-## Child's play
+## Components
+
+Selenium Toys are currently divided into two parts:
+* core
+  * [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=org.seleniumhq.selenium-toys%3Acore)](https://sonarcloud.io/dashboard?id=org.seleniumhq.selenium-toys%3Aselenium-toys)
+* testfacade
+  * [![Quality Gate](https://sonarcloud.io/api/badges/gate?key=org.seleniumhq.selenium-toys%3Atestfacade)](https://sonarcloud.io/dashboard?id=org.seleniumhq.selenium-toys%3Aselenium-toys)
+
+`core` contains all parts for simple handling Selenium `WebDriver`. At `testfacade` you find test backend integrations
+and a small but effective API for executing tests and expecting the results.
+
+## Child's play example
 
 ```java
 import static org.openqa.selenium.remote.BrowserType.CHROME;
