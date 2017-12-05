@@ -101,27 +101,33 @@ within the two images. If the threshold is surpassed the test will fail. Two add
 
 ## Supported WebDrivers
 
-The `@Webdriver` annotation offers an `options` attribute. It a list of strings and will interpreted as map that has
-its key value pairs lined up in one row.
+The `@RunWithWebDriver` annotation specifies the used web driver for the annotated test case. The extended test bridge
+performs the complete Selenium setup and configuration of the web driver. There is a attribute `options` which you can
+provide additional web driver configurations.
 
-* `Webdriver.IMPLICITLY_WAIT`
+* `RunWithWebDriver.IMPLICITLY_WAIT`
 
   Specifies the amount of milliseconds the driver should wait when searching for an element if it is not immediately
   present.
 
-### [Chrome](https://sites.google.com/a/chromium.org/chromedriver/downloads)
-
-* driver executable will be automatically downloaded and installed for Selenium. No extra configuration needed
-* is the executable already locally present then this will be used
-* `ChromeWebdriverFactory.EXPECTED_VERSION`
+* `AbstractDownloadingWebDriverFactory.EXPECTED_VERSION`
 
   With this option you can specify the version of the executable if you need. Omit this option and the latest version
   of the executable will be downloaded and used. 
   
-* `ChromeWebdriverFactory.WORK_DIRECTORY`
+* `AbstractDownloadingWebDriverFactory.WORK_DIRECTORY`
 
-  Via this option the working directory for the chrome driver is specified. There will be the executable located and if
+  Via this option the working directory for the web driver is specified. There will be the executable located and if
   not present then downloaded. Leave it unspecified to use the systems temporary directory.
+
+* `AbstractDownloadingWebDriverFactory.FORCE_UPDATE`
+
+  If there is already a local copy of the web driver executable this option controls if a check for an available newer
+  version and if present a download is performed.
+
+### [Chrome](https://sites.google.com/a/chromium.org/chromedriver/downloads) - `BrowserType.CHROME`
+
+The web driver for Google Chrome.
 
 ### Custom web driver factory
 
