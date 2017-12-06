@@ -75,4 +75,7 @@
         <relativePath>../</relativePath>
     </parent>
 
+    <!-- More Project Information -->
+    <name>Selenium Toys - Core</name>
+
 </project>

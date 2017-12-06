@@ -92,4 +92,7 @@
         </plugins>
     </build>
 
+    <!-- More Project Information -->
+    <name>Selenium Toys - Test facade</name>
+
 </project>
