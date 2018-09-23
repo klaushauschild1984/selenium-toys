@@ -139,8 +139,7 @@ any test will be executed. Otherwise the test setup will fail.
 
 ## Modularize tests
 
-There is a concept of modularization. Maybe you working on a test suite for a rich web application. It is possible that
-in a lot of tests will be al lo of similar test steps. To prevent code duplications and help maintain your tests use
+There is a concept of modularization. Maybe you working on a test suite for a rich web application. It is possible to have similar test steps in many tests. To prevent code duplications and help maintain your tests use
 `SeleniumModule`. By extending this class you are provided with the same api for test steps. The example below
 modularize the usage example. Best practice is that a module has one method that performs the test steps. Within the
 test you have to use it nd perform its action.
