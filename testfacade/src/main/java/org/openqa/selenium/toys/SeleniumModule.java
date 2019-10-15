@@ -51,4 +51,13 @@ public abstract class SeleniumModule implements SeleniumApi {
     return seleniumTests.use(seleniumModule);
   }
 
+  @Override
+  public void maximizeWindow() {
+    seleniumTests.maximizeWindow();
+  }
+
+  @Override
+  public void normalizeWindow() {
+    seleniumTests.normalizeWindow();
+  }
 }

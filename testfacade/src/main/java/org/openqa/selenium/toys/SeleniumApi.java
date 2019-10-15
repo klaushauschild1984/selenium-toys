@@ -22,7 +22,7 @@ public interface SeleniumApi {
 
   /**
    * @deprecated If you really need it, here it is. But blame not me if something works not
-   *             probably.
+   *     probably.
    */
   @Deprecated
   WebDriver getWebDriver();
@@ -35,4 +35,7 @@ public interface SeleniumApi {
 
   <T extends SeleniumModule> T use(final T seleniumModule);
 
+  void maximizeWindow();
+
+  void normalizeWindow();
 }

@@ -15,6 +15,15 @@
 
 package org.openqa.selenium.toys;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.springframework.core.annotation.AnnotationUtils;
+
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,20 +34,13 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.core.annotation.AnnotationUtils;
-
 public class SeleniumTests implements SeleniumApi {
 
   private final Class<?> testClass;
 
   private WebDriver webDriver;
   private Screenshots screenshots;
+  private Dimension windowSize;
 
   public SeleniumTests(final Class<?> clazz) {
     this.testClass = clazz;
@@ -50,36 +52,45 @@ public class SeleniumTests implements SeleniumApi {
 
   public void before(final Method method) {
     // create the web driver
-    final RunWithWebDriver runWithWebDriver = Optional
-        .ofNullable(AnnotationUtils.findAnnotation(testClass, RunWithWebDriver.class)) //
-        .orElseThrow(() -> new AssertionError(String.format(
-            "Test class %s is not annotated with %s to specify which web driver should be used for running.",
-            testClass.getName(), RunWithWebDriver.class.getName())));
+    final RunWithWebDriver runWithWebDriver =
+        Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, RunWithWebDriver.class)) //
+            .orElseThrow(
+                () ->
+                    new AssertionError(
+                        String.format(
+                            "Test class %s is not annotated with %s to specify which web driver should be used for running.",
+                            testClass.getName(), RunWithWebDriver.class.getName())));
     final WebDriverFactory webDriverFactory =
         WebDriverFactoryRegistry.getWebDriverFactory(runWithWebDriver.value());
-    final Map<String, Object> options = Arrays.stream(runWithWebDriver.options()) //
-        .collect(Collectors.toMap(Option::key, Option::value));
+    final Map<String, Object> options =
+        Arrays.stream(runWithWebDriver.options()) //
+            .collect(Collectors.toMap(Option::key, Option::value));
     webDriver = webDriverFactory.create(options);
 
     // inject the entry point
     final WebDriverEntryPoint entryPoint =
-        Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, WebDriverEntryPoint.class)) //
-            .orElseThrow(() -> new AssertionError(String.format(
-                "Test class %s is not annotated with %s to specify the entry point of the test.",
-                testClass.getName(), WebDriverEntryPoint.class.getName())));
+        Optional.ofNullable(
+                AnnotationUtils.findAnnotation(testClass, WebDriverEntryPoint.class)) //
+            .orElseThrow(
+                () ->
+                    new AssertionError(
+                        String.format(
+                            "Test class %s is not annotated with %s to specify the entry point of the test.",
+                            testClass.getName(), WebDriverEntryPoint.class.getName())));
     webDriver.get(entryPoint.value());
 
     // setup screenshots
     Optional.ofNullable(AnnotationUtils.findAnnotation(testClass, TakeScreenshots.class)) //
-        .ifPresent(takeScreenshots -> {
-          screenshots = new Screenshots(webDriver, takeScreenshots, getClass());
-          try {
-            screenshots.start(method.getName());
-          } catch (final AssertionError assertionError) {
-            after(method, true, assertionError);
-            throw assertionError;
-          }
-        });
+        .ifPresent(
+            takeScreenshots -> {
+              screenshots = new Screenshots(webDriver, takeScreenshots, getClass());
+              try {
+                screenshots.start(method.getName());
+              } catch (final AssertionError assertionError) {
+                after(method, true, assertionError);
+                throw assertionError;
+              }
+            });
   }
 
   public void after(final Method method, final boolean hasFailure, final Throwable cause) {
@@ -124,6 +135,30 @@ public class SeleniumTests implements SeleniumApi {
     return seleniumModule;
   }
 
+  @Override
+  public void maximizeWindow() {
+    windowSize = webDriver.manage().window().getSize();
+    webDriver.manage().window().maximize();
+    try {
+      Thread.sleep(1000);
+    } catch (final InterruptedException exception) {
+      throw new RuntimeException(exception);
+    }
+  }
+
+  @Override
+  public void normalizeWindow() {
+    if (windowSize == null) {
+      return;
+    }
+    webDriver.manage().window().setSize(windowSize);
+    try {
+      Thread.sleep(1000);
+    } catch (final InterruptedException exception) {
+      throw new RuntimeException(exception);
+    }
+  }
+
   private Runnable getScreenshotTaker(final String methodName) {
     return () -> {
       if (screenshots == null) {
@@ -136,38 +171,48 @@ public class SeleniumTests implements SeleniumApi {
 
   private String getInvokingMethodName() {
     // filter stack trace by class name
-    final List<StackTraceElement> relevantStackTraceElements = Arrays
-        .stream(Thread.currentThread().getStackTrace()).filter(stackTraceElement -> Objects
-            .equals(stackTraceElement.getClassName(), testClass.getName()))
-        .collect(Collectors.toList());
+    final List<StackTraceElement> relevantStackTraceElements =
+        Arrays.stream(Thread.currentThread().getStackTrace())
+            .filter(
+                stackTraceElement ->
+                    Objects.equals(stackTraceElement.getClassName(), testClass.getName()))
+            .collect(Collectors.toList());
     // the last element is the invoking method
     return relevantStackTraceElements.get(relevantStackTraceElements.size() - 1).getMethodName();
   }
 
   private void checkUniqueMethodNames(final Class<?> testClass) {
-    final List<String> methodNameList = Arrays.stream(testClass.getDeclaredMethods()) //
-        .map(Method::getName) //
-        .collect(Collectors.toList());
+    final List<String> methodNameList =
+        Arrays.stream(testClass.getDeclaredMethods()) //
+            .map(Method::getName) //
+            .collect(Collectors.toList());
     final Set<String> methodNameSet = new HashSet<>(methodNameList);
     if (methodNameList.size() != methodNameSet.size()) {
-      throw new IllegalStateException(String
-          .format("There are not unique method names within test class %s", testClass.getName()));
+      throw new IllegalStateException(
+          String.format(
+              "There are not unique method names within test class %s", testClass.getName()));
     }
   }
 
   private void waitForDocumentReady() {
     final WebDriverWait wait = new WebDriverWait(webDriver, 30);
 
-    wait.until((ExpectedCondition<Boolean>) driver -> ((JavascriptExecutor) driver)
-        .executeScript("return document.readyState").equals("complete"));
-    wait.until((ExpectedCondition<Boolean>) driver -> {
-      try {
-        return ((Long) ((JavascriptExecutor) driver).executeScript("return jQuery.active") == 0);
-      } catch (Exception e) {
-        // no jQuery present
-        return true;
-      }
-    });
+    wait.until(
+        (ExpectedCondition<Boolean>)
+            driver ->
+                ((JavascriptExecutor) driver)
+                    .executeScript("return document.readyState")
+                    .equals("complete"));
+    wait.until(
+        (ExpectedCondition<Boolean>)
+            driver -> {
+              try {
+                return ((Long) ((JavascriptExecutor) driver).executeScript("return jQuery.active")
+                    == 0);
+              } catch (Exception e) {
+                // no jQuery present
+                return true;
+              }
+            });
   }
-
 }
