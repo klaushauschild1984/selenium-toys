@@ -15,12 +15,16 @@
 
 package org.openqa.selenium.toys;
 
+import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.testng.Assert;
 
-class Expect {
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+public class Expect {
 
   private final WebDriver webDriver;
   private final By by;
@@ -33,6 +37,20 @@ class Expect {
   public void hasText(final String expectedText) {
     final WebElement element = webDriver.findElement(by);
     final String text = element.getText();
-    Assert.assertEquals(text, expectedText);
+    assertThat(text, is(expectedText));
+  }
+
+  public void isPresent() {
+    try {
+      final WebElement element = webDriver.findElement(by);
+    } catch (final NoSuchElementException exception) {
+      Assert.fail(String.format("%s is not present", by));
+    }
+  }
+
+  public void isVisible() {
+    isPresent();
+    final WebElement element = webDriver.findElement(by);
+    assertThat(element.isDisplayed(), is(true));
   }
 }
