@@ -19,7 +19,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-class Type {
+public class Type {
 
   private final WebDriver webDriver;
   private final String text;

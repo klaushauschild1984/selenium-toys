@@ -18,7 +18,7 @@ package org.openqa.selenium.toys;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 
-class Submit {
+public class Submit {
 
   private final WebElement element;
   private final Runnable screenshotTaker;
