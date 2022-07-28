@@ -29,7 +29,6 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
@@ -45,126 +44,168 @@ import org.openqa.selenium.WebDriver;
 
 public abstract class AbstractDownloadingWebDriverFactory implements WebDriverFactory {
 
-  public static final String WORK_DIRECTORY = "WORK_DIRECTORY";
-  public static final String EXPECTED_VERSION = "EXPECTED_VERSION";
-  public static final String FORCE_UPDATE = "FORCE_UPDATE";
+	public static final String WORK_DIRECTORY = "WORK_DIRECTORY";
+	public static final String EXPECTED_VERSION = "EXPECTED_VERSION";
+	public static final String FORCE_UPDATE = "FORCE_UPDATE";
 
-  private final String browserType;
-  private final Function<File, Optional<DownloadWebDriverExecutable.WebDriverExecutable>> getWebDriverExecutableFromWorkDirectory;
-  private final Supplier<String> getLatestVersion;
-  private final BiFunction<String, File, DownloadWebDriverExecutable.WebDriverExecutable> downloadExpectedVersion;
-  private final String systemPropertyForExecutable;
+	private final String browserType;
+	private final Function<File, Optional<DownloadWebDriverExecutable.WebDriverExecutable>> getWebDriverExecutableFromWorkDirectory;
+	private final Supplier<String> getLatestVersion;
+	private final BiFunction<String, File, DownloadWebDriverExecutable.WebDriverExecutable> downloadExpectedVersion;
+	private final String systemPropertyForExecutable;
 
-  private WebDriver webDriver;
-
-  protected AbstractDownloadingWebDriverFactory(final String browserType,
-      final Function<File, Optional<DownloadWebDriverExecutable.WebDriverExecutable>> getWebDriverExecutableFromWorkDirectory,
-      final Supplier<String> getLatestVersion,
-      final BiFunction<String, File, DownloadWebDriverExecutable.WebDriverExecutable> downloadExpectedVersion,
-      final String systemPropertyForExecutable) {
-    this.browserType = browserType;
-    this.getWebDriverExecutableFromWorkDirectory = getWebDriverExecutableFromWorkDirectory;
-    this.getLatestVersion = getLatestVersion;
-    this.downloadExpectedVersion = downloadExpectedVersion;
-    this.systemPropertyForExecutable = systemPropertyForExecutable;
-  }
-
-  protected static String getString(final String url) {
-    try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-      try (final CloseableHttpResponse response = httpClient.execute(new HttpGet(url))) {
-        handleHttpStatus(response);
-        return EntityUtils.toString(response.getEntity()).trim();
-      }
-    } catch (final IOException exception) {
-      throw new RuntimeException(exception);
-    }
-  }
-
-  protected static void download(final String url, final Consumer<InputStream> downloadHandler) {
-    try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
-      try (final CloseableHttpResponse response = httpClient.execute(new HttpGet(url))) {
-        handleHttpStatus(response);
-        try (final InputStream inputStream =
-            new BufferedInputStream(response.getEntity().getContent())) {
-          downloadHandler.accept(inputStream);
-        }
-      }
-    } catch (final IOException exception) {
-      throw new RuntimeException(exception);
-    }
-  }
-
-  protected static void downloadZipAndExtract(final String url, final File targetDirectory) {
-    download(url, inputStream -> {
-      try {
-        final byte[] bytes = IOUtils.toByteArray(inputStream);
-        try (final ZipFile zipFile = new ZipFile(new SeekableInMemoryByteChannel(bytes))) {
-          final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-          while (entries.hasMoreElements()) {
-            final ZipArchiveEntry entry = entries.nextElement();
-            final File file = new File(targetDirectory, entry.getName());
-            if (entry.isDirectory()) {
-              file.mkdir();
-              continue;
-            }
-            try (final OutputStream outputStream =
-                new BufferedOutputStream(new FileOutputStream(file))) {
-              IOUtils.copy(zipFile.getInputStream(entry), outputStream);
-            }
-          }
-        }
-      } catch (final IOException exception) {
-        throw new RuntimeException(exception);
-      }
-    });
-  }
-
-  private static void handleHttpStatus(final CloseableHttpResponse response) throws IOException {
-    final StatusLine statusLine = response.getStatusLine();
-    if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
-      throw new IOException(String.format("Http GET not successful. Status: %s", statusLine));
-    }
-  }
-
-  @Override
-  public WebDriver create(final Map<String, Object> options) {
-    new Initialization(() -> {
-      beforeInitialization(options);
-
-      final File workDirectory = getWorkDirectory(options);
-      final String expectedVersion = (String) options.get(EXPECTED_VERSION);
-      final boolean forceUpdate = Boolean.parseBoolean((String) options.get(FORCE_UPDATE));
-      final File webDriverExecutable =
-          new DownloadWebDriverExecutable(workDirectory, getWebDriverExecutableFromWorkDirectory,
-              getLatestVersion, downloadExpectedVersion).get(expectedVersion, forceUpdate);
-      new SystemPropertyWebDriverExecutableSetup(systemPropertyForExecutable, webDriverExecutable)
-          .setup();
-      webDriver = instantiateWebDriver(options);
-      new WebDriverShutdownHook(webDriver).install();
-
-      afterInitialization(options);
-    }).initialize();
-    return webDriver;
-  }
-
-  protected File getWorkDirectory(final Map<String, Object> options) {
-    return new File(((String) Optional.ofNullable(options.get(WORK_DIRECTORY))
-        .orElse(System.getProperty("java.io.tmpdir"))), browserType);
-  }
-
-  protected void beforeInitialization(final Map<String, Object> options) {
-    // override this to perform additional stuff before initialization
-  }
-
-  protected abstract WebDriver instantiateWebDriver(final Map<String, Object> options);
-
-  protected void afterInitialization(final Map<String, Object> options) {
-    // override this to perform additional stuff after initialization
-  }
-
-  @Override
-  public String createdBrowserType() {
-    return browserType;
-  }
-
+	private WebDriver webDriver;
+	/**
+	 * 
+	 * @param browserType
+	 * @param getWebDriverExecutableFromWorkDirectory
+	 * @param getLatestVersion
+	 * @param downloadExpectedVersion
+	 * @param systemPropertyForExecutable
+	 */
+	protected AbstractDownloadingWebDriverFactory(final String browserType,
+		final Function<File, Optional<DownloadWebDriverExecutable.WebDriverExecutable>> getWebDriverExecutableFromWorkDirectory,
+		final Supplier<String> getLatestVersion,
+		final BiFunction<String, File, DownloadWebDriverExecutable.WebDriverExecutable> downloadExpectedVersion, final String systemPropertyForExecutable) {
+		this.browserType = browserType;
+		this.getWebDriverExecutableFromWorkDirectory = getWebDriverExecutableFromWorkDirectory;
+		this.getLatestVersion = getLatestVersion;
+		this.downloadExpectedVersion = downloadExpectedVersion;
+		this.systemPropertyForExecutable = systemPropertyForExecutable;
+	}
+	/**
+	 * 
+	 * @param url
+	 * @return
+	 */
+	protected static String getString(final String url) {
+		try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+			try (final CloseableHttpResponse response = httpClient.execute(new HttpGet(url))) {
+			handleHttpStatus(response);
+			return EntityUtils.toString(response.getEntity()).trim();
+		}
+	} catch (final IOException exception) {
+		throw new RuntimeException(exception);
+	}
+}
+	/**
+	 * 
+	 * @param url
+	 * @param downloadHandler
+	 */
+	protected static void download(final String url, final Consumer<InputStream> downloadHandler) {
+	  try (final CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+	    try (final CloseableHttpResponse response = httpClient.execute(new HttpGet(url))) {
+	      handleHttpStatus(response);
+	      try (final InputStream inputStream =
+	          new BufferedInputStream(response.getEntity().getContent())) {
+	        downloadHandler.accept(inputStream);
+	      }
+	    }
+	  } catch (final IOException exception) {
+	    throw new RuntimeException(exception);
+	  }
+	}
+	/**
+	 * 
+	 * @param url to download
+	 * @param targetDirectory to extract file to
+	 */
+	protected static void downloadZipAndExtract(final String url, final File targetDirectory) {
+	    download(url, inputStream -> {
+	      try {
+	        final byte[] bytes = IOUtils.toByteArray(inputStream);
+	        try (final ZipFile zipFile = new ZipFile(new SeekableInMemoryByteChannel(bytes))) {
+	          final Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
+	          while (entries.hasMoreElements()) {
+	            final ZipArchiveEntry entry = entries.nextElement();
+	            final File file = new File(targetDirectory, entry.getName());
+	            if (entry.isDirectory()) {
+	              file.mkdir();
+	              continue;
+	            }
+	            try (final OutputStream outputStream =
+	                new BufferedOutputStream(new FileOutputStream(file))) {
+	              IOUtils.copy(zipFile.getInputStream(entry), outputStream);
+	            }
+	          }
+	        }
+	      } catch (final IOException exception) {
+	        throw new RuntimeException(exception);
+	      }
+	  });
+	}
+	/**
+	 * 
+	 * @param response
+	 * @throws IOException
+	 */
+	private static void handleHttpStatus(final CloseableHttpResponse response) throws IOException {
+		final StatusLine statusLine = response.getStatusLine();
+		if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
+			throw new IOException(String.format("Http GET not successful. Status: %s", statusLine));
+	  }
+	}
+	/**
+	 * 
+	 * @param options
+	 * @return
+	 */
+	@Override
+	public WebDriver create(final Map<String, Object> options) {
+		new Initialization(() -> {
+	    beforeInitialization(options);
+	
+	    final File workDirectory = getWorkDirectory(options);
+	    final String expectedVersion = (String) options.get(EXPECTED_VERSION);
+	    final boolean forceUpdate = Boolean.parseBoolean((String) options.get(FORCE_UPDATE));
+	    final File webDriverExecutable = 
+	    		new DownloadWebDriverExecutable(workDirectory, getWebDriverExecutableFromWorkDirectory, 
+	    				getLatestVersion, downloadExpectedVersion).get(expectedVersion, forceUpdate);
+	    new SystemPropertyWebDriverExecutableSetup(systemPropertyForExecutable, webDriverExecutable)
+	    .setup();
+	    webDriver = instantiateWebDriver(options);
+	    new WebDriverShutdownHook(webDriver).install();
+	
+	    afterInitialization(options);
+	    }).initialize();
+		return webDriver;
+	}
+	/**
+	 * 
+	 * @param options
+	 * @return
+	 */
+	protected File getWorkDirectory(final Map<String, Object> options) {
+	  return new File(((String) Optional.ofNullable(options.get(WORK_DIRECTORY))
+	      .orElse(System.getProperty("java.io.tmpdir"))), browserType);
+	}
+	/**
+	 * 
+	 * @param options
+	 */
+	protected void beforeInitialization(final Map<String, Object> options) {
+	    // override this to perform additional stuff before initialization
+	}
+	/**
+	 * 
+	 * @param options
+	 * @return 
+	 */
+	protected abstract WebDriver instantiateWebDriver(final Map<String, Object> options);
+	/**
+	 * 
+	 * @param options
+	 */
+	protected void afterInitialization(final Map<String, Object> options) {
+		// override this to perform additional stuff after initialization
+	}
+	/**
+	 * 
+	 * @return type of browser
+	 */
+	@Override
+	public String createdBrowserType() {
+		return browserType;
+	}
 }
